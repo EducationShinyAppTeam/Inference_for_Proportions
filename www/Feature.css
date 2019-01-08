@@ -1,0 +1,101 @@
+.skin-blue .main-header>.navbar {
+background-color: #1E407C;
+}
+.content-wrapper,.right-side {
+background-color: white;
+}
+.skin-blue .main-header .logo {
+background-color: #1E407C;
+color: white;
+}
+.skin-blue .main-header .logo:hover {
+background-color: black;
+}
+aside.main-sidebar {
+background-color: black !important;
+}
+.main-header .logo {
+font-family: "Georgia", Times, "Times New Roman", serif;
+font-weight: bold;
+font-size: 15px;
+}
+#explore,#new,#submit,#newSample{
+  background-color: #1E407C;
+  color: #FFFFFF;
+}
+.popover-title {
+  color: #FFFFFF;
+  background-color:#1E407C;
+}
+.js-irs-0 .irs-bar {
+border-top-color: #1E407C;
+border-bottom-color: #1E407C;
+} 
+
+.js-irs-0 .irs-bar-edge {
+border-color: #1E407C;
+}
+
+.js-irs-0 .irs-single, .js-irs-0 .irs-bar-edge, .js-irs-0 .irs-bar {
+background: #1E407C;
+}
+.js-irs-1 .irs-bar {
+border-top-color: #1E407C;
+border-bottom-color: #1E407C;
+} 
+
+.js-irs-1 .irs-bar-edge {
+border-color: #1E407C;
+}
+
+.js-irs-1 .irs-single, .js-irs-1 .irs-bar-edge, .js-irs-1 .irs-bar {
+background: #1E407C;
+}
+.js-irs-2 .irs-bar {
+border-top-color: #1E407C;
+border-bottom-color: #1E407C;
+} 
+
+.js-irs-2 .irs-bar-edge {
+border-color: #1E407C;
+}
+
+.js-irs-2 .irs-single, .js-irs-2 .irs-bar-edge, .js-irs-2 .irs-bar {
+background: #1E407C;
+}
+.js-irs-3 .irs-bar {
+border-top-color: #1E407C;
+border-bottom-color: #1E407C;
+} 
+
+.js-irs-3 .irs-bar-edge {
+border-color: #1E407C;
+}
+
+.js-irs-3 .irs-single, .js-irs-3 .irs-bar-edge, .js-irs-3 .irs-bar {
+background: #1E407C;
+}
+.js-irs-4 .irs-bar {
+border-top-color: #1E407C;
+border-bottom-color: #1E407C;
+} 
+
+.js-irs-4 .irs-bar-edge {
+border-color: #1E407C;
+}
+
+.js-irs-4 .irs-single, .js-irs-4 .irs-bar-edge, .js-irs-4 .irs-bar {
+background: #1E407C;
+}
+.js-irs-5 .irs-bar {
+border-top-color: #1E407C;
+border-bottom-color: #1E407C;
+} 
+
+.js-irs-5 .irs-bar-edge {
+border-color: #1E407C;
+}
+
+.js-irs-5 .irs-single, .js-irs-5 .irs-bar-edge, .js-irs-5 .irs-bar {
+background: #1E407C;
+}
