@@ -7,7 +7,8 @@ library(shinyBS)
 dashboardPage(skin="blue",
               
               #Title
-              dashboardHeader(title="Confidence Interval with PSU students",titleWidth=350),
+              dashboardHeader(title="Confidence Interval with PSU students",titleWidth=350,
+                              tags$li(class='dropdown',tags$a(href='https://shinyapps.science.psu.edu/',tags$img(src='homebut.PNG', width = 15)))),
               
               #Sidebar
               dashboardSidebar(
@@ -45,7 +46,7 @@ dashboardPage(skin="blue",
                           h4(tags$li("On the Test for Differences page the user can change the sample size and/or the confidence level to explore the behavior of a z-test for differences between the UP campus and other Penn State campuses on percentage fo students who are Pennsylvania residents based on sample data.")),
                               
                           
-                          div(style = "text-align: center",bsButton("explore", "Explore", icon("bolt"), size = "large")),
+                          div(style = "text-align: center", bsButton("explore", "Explore", icon("bolt"), size = "large",class = "circle grow")),
                           br(),
                           h3(strong("Acknowledgements:")),
                                    h4("This app was developed and coded by Yingjie (Chelsea) Wang."),
@@ -65,9 +66,7 @@ dashboardPage(skin="blue",
                   
                   tabItem(tabName = "UPRes",
                           fluidPage(
-                            div(style="display: inline-block;vertical-align:top;",
-                                tags$a(href='https://shinyapps.science.psu.edu/',tags$img(src='homebut.PNG', width = 15))
-                            ),
+                            
                             titlePanel("Confidence Intervals for Enrollment by Residency in 2016 (p = 59.5%)"),
                             sidebarLayout(
                               sidebarPanel(
@@ -125,9 +124,7 @@ dashboardPage(skin="blue",
                   ),
                   tabItem(tabName = "findz",
                           fluidPage(
-                            div(style="display: inline-block;vertical-align:top;",
-                                tags$a(href='https://shinyapps.science.psu.edu/',tags$img(src='homebut.PNG', width = 15))
-                            ),
+                           
                             titlePanel("Confidence Intervals for a population mean (μ = 0 and σ = 1)"),
                             sidebarLayout(
                               sidebarPanel(
@@ -143,13 +140,21 @@ dashboardPage(skin="blue",
                                   style = "background-color: #A9A9A9;",
                                   
                                   h3("Quiz"),
-                                  textInput("question1", "What is z∗  Multiplier for 90% confidence level?", ""),
-                                  textInput("question2", "What is z∗  Multiplier for 95% confidence level?", ""),
-                                  textInput("question3", "What is z∗  Multiplier for 99% confidence level?", ""),
-                                  selectInput("question4", "Increasing the confidence level makes the confidence interval wider.",
-                                              c("True" = "y",
-                                                "False" = "n",
-                                                " " = "null"),selected = "null")
+                                  h4("What is z∗  Multiplier for 90% confidence level?",style="font-size:90%"),
+                                  div(style="display:inline-block",textInput("question1", " ", width='2cm',"")),
+                                  div(style="display:inline-block",htmlOutput('pic1')),
+                                  h4("What is z∗  Multiplier for 95% confidence level?",style="font-size:90%"),
+                                  div(style="display:inline-block",textInput("question2", " ", width='2cm',"")),
+                                  div(style="display:inline-block",htmlOutput('pic2')),
+                                  h4("What is z∗  Multiplier for 99% confidence level?",style="font-size:90%"),
+                                  div(style="display:inline-block",textInput("question3", " ", width='2cm',"")),
+                                  div(style="display:inline-block",htmlOutput('pic3')),
+                                  h4("Increasing the confidence level makes the confidence interval wider.",style="font-size:90%"),
+                                  div(style="display:inline-block",selectInput("question4", " ",
+                                                                               c("True" = "y",
+                                                                                 "False" = "n",
+                                                                                 " " = "null"),width='2cm',selected = "null")),
+                                  div(style="display:inline-block",htmlOutput('pic4'))
                                   #textInput("question4", "Increasing the confidence level makes confidence interval getting larger? (YES or NO)", "input 'YES' or 'NO'"),
                                   # br(),
                                   # actionButton("submit", "Submit Answers")
@@ -171,9 +176,7 @@ dashboardPage(skin="blue",
                           )
                   ),
                   tabItem(tabName = "popdiff",
-                          div(style="display: inline-block;vertical-align:top;",
-                              tags$a(href='https://shinyapps.science.psu.edu/',tags$img(src='homebut.PNG', width = 15))
-                          ),
+                          
                           titlePanel("Tests for Enrollment by Residency between University Park and Commonwealth Campuses"),
                           sidebarLayout(
                             sidebarPanel(

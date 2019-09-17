@@ -214,13 +214,60 @@ shinyServer(function(input, output,session) {
     #   )
     #   paste("All correct. Great Job!")
     # })
-    validate(need(input$question1 != '' & input$question2 != '' & input$question3 != '' &input$question4 != '','Please answer all questions.'))
-    if((input$question1 == 1.645 || input$question1 == 1.65 || input$question1 == 1.6 || input$question1 == 2)
-        &(input$question2 == '1.960' || input$question2 == 1.96 || input$question2 == 2.0)
-        &(input$question3 == '2.576' || input$question3 == 2.58 || input$question3 == 2.6 || input$question3 == 3)
-        &(input$question4 == 'y')){
+    validate(need(!is.null(input$question1) & !is.null(input$question2) & !is.null(input$question3) & !is.null(input$question4),'Please answer all questions.'))
+    if((input$question1 == 1.645 | input$question1 == 1.65 | input$question1 == 1.6 | input$question1 == 2)
+       &(input$question2 == 1.960 | input$question2 == 1.96 | input$question2 == 2.0)
+       &(input$question3 == 2.576 | input$question3 == 2.58 | input$question3 == 2.6 | input$question3 == 3)
+       &(input$question4 == 'y')){
       cat('All correct. Great Job!')
     }
+    
+    #Render pic1
+    if (input$question1!=''){
+      output$pic1 = renderUI({
+        
+        if(input$question1 == 1.645 || input$question1 == 1.65 || input$question1 == 1.6 || input$question1 == 2){
+          img(src = "check.png", width = 25)
+        }
+        else{
+          img(src = "cross.png", width = 25)
+        }
+      })}
+    
+    #Render pic2
+    if (input$question2!=''){
+      output$pic2 = renderUI({
+        if(input$question2 == 1.960 || input$question2 == 1.96 || input$question2 == 2.0){
+          img(src = "check.png", width = 25)
+        }
+        else{
+          img(src = "cross.png", width = 25)
+        }
+      })}
+    
+    #Render pic3
+    if (input$question3!=''){
+      output$pic3 = renderUI({
+        if(input$question3 == 2.576 || input$question3 == 2.58 || input$question3 == 2.6 || input$question3 == 3){
+          img(src = "check.png", width = 25)
+        }
+        else{
+          img(src = "cross.png", width = 25)
+        }
+      })}
+    
+    
+    #Render pic4
+    if (input$question4!='null'){
+      output$pic4 = renderUI({
+        
+        if(input$question4 == 'y'){
+          img(src = "check.png", width = 25)
+        }
+        else{
+          img(src = "cross.png", width = 25)
+        }
+      })}
   })
   
   ####################################################################
