@@ -1,10 +1,88 @@
 library(shiny)
 library(ggplot2)
-library(mosaic)
-library(dtplyr)
-library(data.table)
 library(scales)
 library(Hmisc)
+
+# Helper Functions -------------------------------------------------------------
+#-------------------------------------------------------------------------------
+#  Title: Confidence Intervals for Binomial Probability
+#  Author: Frank E. Harrell, Jr.
+#  Date: 2020
+#  Code version: 4.4-0
+#  Availability: https://CRAN.R-project.org/package=Hmisc
+#  We needed to bypass the loading of the foreign package for R 3.6.3, thus
+#  we are using the definition of the binconf which is all we needed from Hmisc.
+#-------------------------------------------------------------------------------
+binconf <- function (x, n, alpha = 0.05,
+                     method = c("wilson", "exact", "asymptotic", "all"),
+                     include.x = FALSE, include.n = FALSE, return.df = FALSE)
+{
+  method <- match.arg(method)
+  bc <- function(x, n, alpha, method) {
+    nu1 <- 2 * (n - x + 1)
+    nu2 <- 2 * x
+    ll <- if (x > 0)
+      x/(x + qf(1 - alpha/2, nu1, nu2) * (n - x + 1))
+    else 0
+    nu1p <- nu2 + 2
+    nu2p <- nu1 - 2
+    pp <- if (x < n)
+      qf(1 - alpha/2, nu1p, nu2p)
+    else 1
+    ul <- ((x + 1) * pp)/(n - x + (x + 1) * pp)
+    zcrit <- -qnorm(alpha/2)
+    z2 <- zcrit * zcrit
+    p <- x/n
+    cl <- (p + z2/2/n + c(-1, 1) * zcrit *
+             sqrt((p * (1 - p) + z2/4/n)/n))/(1 + z2/n)
+    if (x == 1)
+      cl[1] <- -log(1 - alpha)/n
+    if (x == (n - 1))
+      cl[2] <- 1 + log(1 - alpha)/n
+    asymp.lcl <- x/n - qnorm(1 - alpha/2) * sqrt(((x/n) *
+                                                    (1 - x/n))/n)
+    asymp.ucl <- x/n + qnorm(1 - alpha/2) * sqrt(((x/n) *
+                                                    (1 - x/n))/n)
+    res <- rbind(c(ll, ul), cl, c(asymp.lcl, asymp.ucl))
+    res <- cbind(rep(x/n, 3), res)
+    switch(method, wilson = res[2, ], exact = res[1, ], asymptotic = res[3,
+                                                                         ], all = res, res)
+  }
+  if ((length(x) != length(n)) & length(x) == 1)
+    x <- rep(x, length(n))
+  if ((length(x) != length(n)) & length(n) == 1)
+    n <- rep(n, length(x))
+  if ((length(x) > 1 | length(n) > 1) & method == "all") {
+    method <- "wilson"
+    warning("method=all will not work with vectors...setting method to wilson")
+  }
+  if (method == "all" & length(x) == 1 & length(n) == 1) {
+    mat <- bc(x, n, alpha, method)
+    dimnames(mat) <- list(c("Exact", "Wilson", "Asymptotic"),
+                          c("PointEst", "Lower", "Upper"))
+    if (include.n)
+      mat <- cbind(N = n, mat)
+    if (include.x)
+      mat <- cbind(X = x, mat)
+    if (return.df)
+      mat <- as.data.frame(mat)
+    return(mat)
+  }
+  mat <- matrix(ncol = 3, nrow = length(x))
+  for (i in 1:length(x)) mat[i, ] <- bc(x[i], n[i], alpha = alpha,
+                                        method = method)
+  dimnames(mat) <- list(rep("", dim(mat)[1]), c("PointEst",
+                                                "Lower", "Upper"))
+  if (include.n)
+    mat <- cbind(N = n, mat)
+  if (include.x)
+    mat <- cbind(X = x, mat)
+  if (return.df)
+    mat <- as.data.frame(mat, row.names = NULL)
+  mat
+}
+#End of Harrell's code----------------------------------------------------------
+
 
 
 # Define server logic required to draw a histogram
@@ -16,27 +94,41 @@ shinyServer(function(input, output,session) {
   #Null hypothesis
   output$nullhypo = renderUI({
     
-    h3("Ho: p =", input$prop)
+    h3("Ho: p = 0.595")
   })
   
   output$design = renderUI({
-    if(input$designcheckbox)
-    {
-    h4("A researcher plans to take a random sample of size n students to do a survey about their experiences in studying at the University Park campus of Penn State University. However, she worries that sample results could be biased because the students who agree to participate might be different from those who don't (this would be an example of non-response bias). The researcher makes a confidence interval for the percentage of Penn State Students who are Pennsylvania residents based on her study and compares it to the mean of 59.5% for the population of all Penn State University Park students. This app shows  how confidence intervals of that type would come out when there is no bias.")
-    }
+    
+    h4("A researcher plans to take a random sample of size n students to do a survey about their experiences in studying at the University Park campus of Penn State University. However, she worries that sample results could be biased because the students who agree to participate might be different from those who don't (this would be an example of non-response bias). The researcher makes a confidence interval for the percentage of Penn State Students who are Pennsylvania residents based on her study. This app shows  how confidence intervals of that type would come out when there is no bias.")
+    
   })
+  
+  output$notice = renderText({
+    paste0("The green lines in the population plot and sample plot represent true population proportion.")
+  })
+  
+  output$navy = renderText({
+    paste0("The navy lines in the CI plot indicate a confidence interval covers the population proportion.")
+  })
+  
+  output$red = renderText({
+    paste0("The red lines in the CI plot indicate that the population proportion is outside of the confidence interval.")
+  })
+  
+  
   
   #population plot with true prop
   output$popMean  = renderPlot({
-    my_vector=c(input$prop, 1-input$prop)
-    names(my_vector)=c("Pennsylvania Students at University Park","Out-of-state Students at University Park")
+    my_vector=c(0.595, 1-0.595)
+    names(my_vector)=c("PA Students","Non-PA Students")
     ggplot() + geom_bar(aes(x=names(my_vector), y=my_vector), stat='identity',width=0.3, fill = "steelblue")+
       lims(y = c(0,1))+
       geom_hline(yintercept = 0.595, color = "forestgreen", size = 1.2)+
+      
       labs(
-        title = paste0("Proportion for Pennsylvania Students at University Park is ", input$prop, ". (true proportion for 2016 in green color)"),
-        x = "whether the student is Pennsylvania Resident",
-        y = "Enrollment by Residency")
+        title = paste0("Population proportion for residency in UP = 0.595"),
+        x = "Whether PA Resident",
+        y = "Proportion Enrollment by Residency")
     #barplot(my_vector,col=rgb(0.2,0.4,0.6,0.6),ylim=c(0,1), ylab="precentage")
     
   })
@@ -45,7 +137,7 @@ shinyServer(function(input, output,session) {
   
   #Calculating alpha by the confidence level input
   alpha <- reactive({
-    (1 - input$level) / 2
+    (1 - input$level) 
   })
   
   #Updating Sample Size
@@ -61,7 +153,7 @@ shinyServer(function(input, output,session) {
       x =
         do.call(
           paste0("rbinom"),
-          c(list(n = as.integer(input$nsamp) * 50), list(1,input$prop)))
+          c(list(n = as.integer(input$nsamp) * 50), list(1,0.595)))
     ) %>%
       mutate(idx = rep(1:50, each = input$nsamp))
   })
@@ -75,7 +167,7 @@ shinyServer(function(input, output,session) {
         sampleProp = binconf(Count, N(), alpha=alpha())[1],
         lowerbound = binconf(Count, N(), alpha=alpha())[2],
         upperbound = binconf(Count, N(), alpha=alpha())[3],
-        cover = (lowerbound < input$prop) & (input$prop < upperbound)) %>%
+        cover = (lowerbound < 0.595) & (0.595 < upperbound)) %>%
       ungroup()
   })
   
@@ -106,7 +198,7 @@ shinyServer(function(input, output,session) {
   output$CIplot <- renderPlot({
     validate(
       need(is.numeric(input$nsamp),
-           message = "Please input samle size")
+           message = "Please input sample size")
     )
     
     # validate(
@@ -120,7 +212,7 @@ shinyServer(function(input, output,session) {
             alpha = idx == selectedSample(),
             size = idx == selectedSample()
         )) +
-      geom_hline(yintercept = input$prop, size = 2, colour = "black", alpha = 0.5) +
+      geom_hline(yintercept = 0.595, size = 2, colour = "forestgreen", alpha = 0.5) +
       coord_flip() +
       scale_size_manual(values = c("TRUE" = 1.5, "FALSE" = .7), guide = FALSE) +
       scale_color_manual(values = c("TRUE" = "navy", "FALSE" = "red"), guide = FALSE) +
@@ -133,21 +225,25 @@ shinyServer(function(input, output,session) {
             axis.ticks.y = element_blank())
   })
   
-  output$sampProp<- renderPlot({
+  
+  output$sampProp  = renderPlot({
     validate(
       need(is.numeric(input$nsamp),
-           message = "Please input samle size")
+           message = "Please input sample size")
     )
+    my_vector=c(round(mean(OneSample()$x), 3), 1-round(mean(OneSample()$x), 3))
+    names(my_vector)=c("PA Students","Non-PA Students")
+    ggplot() + geom_bar(aes(x=names(my_vector), y=my_vector),width =0.3,stat = 'identity', fill = OneSampleColor())+
+      lims(y = c(0,1))+
+      geom_hline(yintercept = 0.595, color = "forestgreen", size = 1.2)+
+      labs(
+        title = paste0("Sample proportion for residency in UP = ",
+                        round(mean(OneSample()$x), 2)),
+        x = "Whether PA Resident",
+        y = "Proportion Enrollment by Residency"
+        )
+    #barplot(my_vector,col=rgb(0.2,0.4,0.6,0.6),ylim=c(0,1), ylab="precentage")
     
-    ggplot( data = OneSample()) +
-      geom_histogram( aes(x = x), bins = 15,
-                      fill = OneSampleColor(), alpha=0.5) +
-      geom_hline(yintercept = input$prop*N(), color = "forestgreen", size = 1) +
-      labs(title = paste("Sample proportion for residency in UP = ",
-                         round(mean(OneSample()$x), 2)),
-           x="")
-    
-  
   })
   
   rate <- reactiveValues(cover = 0, total = 0)
@@ -165,7 +261,7 @@ shinyServer(function(input, output,session) {
   output$CoverageRate <- renderText({
     validate(
       need(is.numeric(input$nsamp),
-           message = "Please input samle size")
+           message = "Please input sample size")
     )
     
     paste(sum(Intervals()$cover), "of these",
@@ -377,7 +473,7 @@ shinyServer(function(input, output,session) {
   output$CItable = renderTable({
     validate(
       need(is.numeric(input$nSamp),
-           message = "Please input samle size")
+           message = "Please input sample size")
     )
     if(input$CIcheckbox)
     {
@@ -399,7 +495,7 @@ shinyServer(function(input, output,session) {
   output$sampleinfotable = renderTable({
     validate(
       need(is.numeric(input$nSamp),
-           message = "Please input samle size")
+           message = "Please input sample size")
     )
     ctable = matrix(c(percent(mean(UPS())), percent(mean(UWS()))), nrow=1)
     colnames(ctable) = c("University Park","Other Campuses")
@@ -417,7 +513,7 @@ shinyServer(function(input, output,session) {
   output$testtable = renderTable({
     validate(
       need(is.numeric(input$nSamp),
-           message = "Please input samle size")
+           message = "Please input sample size")
     )
     if(input$testcheckbox)
     {
@@ -435,7 +531,7 @@ shinyServer(function(input, output,session) {
   output$decisionZ = renderText({
     validate(
       need(is.numeric(input$nSamp),
-           message = "Please input samle size")
+           message = "Please input sample size")
     )
     if(input$decisioncheckbox)
     {
@@ -452,7 +548,7 @@ shinyServer(function(input, output,session) {
   output$decisionP = renderText({
     validate(
       need(is.numeric(input$nSamp),
-           message = "Please input samle size")
+           message = "Please input sample size")
     )
     if(input$decisioncheckbox)
     {
