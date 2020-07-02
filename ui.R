@@ -7,10 +7,7 @@ dashboardPage(skin="purple",
               
               #Title
               dashboardHeader(title="Inference for Proportions",titleWidth=250,
-                              tags$li(class = "dropdown", actionLink("info", icon("info"))),
-                              tags$li(class = "dropdown",
-                                      tags$a(href='https://github.com/EducationShinyAppTeam/BOAST',
-                                             icon("github"))),
+                              
                               tags$li(class = "dropdown",
                                       tags$a(href='https://shinyapps.science.psu.edu/',
                                              icon("home")))
@@ -58,23 +55,14 @@ dashboardPage(skin="purple",
                           div(style = "text-align: center", bsButton("explore", "Explore", icon("bolt"), size = "large",class = "circle grow")),
                           br(),
                           h2("Acknowledgements"),
-                          p("Information about confidence interval graph was drawn from Randall Pruim's shiny app."),
-                          p(
-                            "Budget Office in PSU. (2019), Enrollment by Residency Fall 2019. Available at https://factbook.psu.edu/factbook/StudentDynamic/PANonPASummary.aspx?YearCode=2019Enr&FBPlusIndc=N"
-                          ),
+                          p("This app was developed and programmed by Zhuolin Luo extending earlier work by  Yingjie (Chelsea) Wang."),
                           
-                          helpText(
-                            a("Click Here to view original official page",
-                              href = "https://factbook.psu.edu/factbook/StudentDynamic/PANonPASummary.aspx?YearCode=2019Enr&FBPlusIndc=N",
-                              target = "blank"
-                            )
-                          ),
                           br(),
                           p("We would like to extend a special thanks to the Shiny Program Students.",
                             br(),
                             br(),
                             br(),
-                            div(class = "updated", "Last Update: 06/26/2020 by ZL.")
+                            div(class = "updated", "Last Update: 07/02/2020 by ZL.")
                           )
                   ),
                   
