@@ -18,11 +18,11 @@ dashboardPage(skin="purple",
                 width = 250,
                 sidebarMenu(id = "tabs",
                   menuItem("Overview", tabName = "over", icon = icon("dashboard")),
-                  menuItem("UP Residency Percentage", tabName = "UPRes", icon = icon("wpexplorer")),
-                  menuItem("Finding the z∗ Multiplier", tabName = "findz", icon = icon("wpexplorer")),
+                  menuItem("UP Residency Perentage", tabName = "UPRes", icon = icon("wpexplorer")),
                   menuItem("Difference of Proportions", tabName = "popdiff", icon = icon("wpexplorer")),
+                  menuItem("Finding the z∗ Multiplier", tabName = "findz", icon = icon("wpexplorer")),
                   #menuItem("Z-score Table", tabName = "table", icon = icon("flag"))
-                  menuItem("Reference",tabName = "Ref",icon = icon("leanpub"))
+                  menuItem("References",tabName = "Ref",icon = icon("leanpub"))
                 ),
                 #PSU Logo
                 tags$div(
@@ -41,24 +41,23 @@ dashboardPage(skin="purple",
                   
                   tabItem(tabName = "over",
                           h1("Inference for proportions"),
-                          p("This app represents an interactive supplementary module embedded in statistics lessons with two features. The first feature visualizes how the variations in confidence levels and sample size affect the outcome confidence interval in a single mean. The second feature tests the difference between two means by adjusting confidence levels and sample size and generating calculation results with explanations. The app requires students to engage in the interaction with the scenarios provided in context."),
-                          p("This lesson explores the behavior of confidence intervals for a single proportion and two sample tests for the difference in proportions as the level and sample size changes."),
+                          p("This app visualizes how the confidence level and sample size affect the outcome confidence interval for a single proportion under the null hypothesis of no bias. The app also explores the same issues for a confidence interval for the difference between two population proportions."),
                           br(),         
                           h2("Instructions"),
                           tags$ol(
                             tags$li("Move the sample size and level sliders to see how they affect  confidence intervals for the proportion of Penn State students who are residents of Pennsylvania  or two-sample tests for differences in the proportion of Pennsylvania residents between the University Park campus and the other campuses."),
                             tags$li("Click on the generate buttons to draw new samples and - for the confidence interval app - click on the center of an interval to show data for that sample."),
                             tags$li("The Z* multiplier page allows the user to find critical values (multiplier numbers) needed in making a confidence interval. Complete a short quiz to show you have mastered the concept."),
-                            tags$li("On the Test for Differences page the user can change the sample size and/or the confidence level to explore the behavior of a z-test for differences between the UP campus and other Penn State campuses on percentage fo students who are Pennsylvania residents based on sample data.")
+                            tags$li("On the Test for Differences page the user can change the sample size and/or the confidence level to explore the behavior of a z-test for differences between the UP campus and other Penn State campuses on proportion fo students who are Pennsylvania residents based on sample data.")
                           ),   
                           
                           div(style = "text-align: center", bsButton("explore", "Explore", icon("bolt"), size = "large",class = "circle grow")),
                           br(),
                           h2("Acknowledgements"),
-                          p("This app was developed and programmed by Zhuolin Luo extending earlier work by  Yingjie (Chelsea) Wang."),
+                          p("This app was developed and programmed by  Yingjie (Chelsea) Wang and updated by by Zhuolin Luo in 2020."),
                           
                           br(),
-                          p("We would like to extend a special thanks to the Shiny Program Students.",
+                          p(
                             br(),
                             br(),
                             br(),
@@ -77,7 +76,7 @@ dashboardPage(skin="purple",
                               collapsible = TRUE,
                               collapsed = FALSE,
                               width = '100%', 
-                              "A researcher plans to take a random sample of size n students to do a survey about their experiences in studying at the University Park campus of Penn State University. However, she worries that sample results could be biased because the students who agree to participate might be different from those who don't (this would be an example of non-response bias). The researcher makes a confidence interval for the percentage of Penn State Students who are Pennsylvania residents based on her study. This app shows  how confidence intervals of that type would come out when there is no bias.")
+                              "A researcher plans to take a random sample of size n students to do a survey about their experiences in studying at the University Park campus of Penn State University. However, she worries that sample results could be biased because the students who agree to participate might be different from those who don't (this would be an example of non-response bias). The researcher makes a confidence interval for the proportion of Penn State Students who are Pennsylvania residents based on her study. This app shows  how confidence intervals of that type would come out when there is no bias.")
                             ,
                             sidebarLayout(
                               sidebarPanel(
@@ -87,7 +86,7 @@ dashboardPage(skin="purple",
                                 # h4("where z* is a multiplier number that comes form the normal curve and determines the level of confidence."),
                                 
                                 
-                                #h4("A researcher plans to take a random sample of size n students to do a survey about their experiences in studying at the University Park campus of Penn State University. However, she worries that sample results could be biased because the students who agree to participate might be different from those who don't (this would be an example of non-response bias). The researcher makes a confidence interval for the percentage of Penn State Students who are Pennsylvania residents based on her study and compares it to the mean of 59.5% for the population of all Penn State University Park students. This app shows  how confidence intervals of that type would come out when there is no bias."),
+                                #h4("A researcher plans to take a random sample of size n students to do a survey about their experiences in studying at the University Park campus of Penn State University. However, she worries that sample results could be biased because the students who agree to participate might be different from those who don't (this would be an example of non-response bias). The researcher makes a confidence interval for the proportion of Penn State Students who are Pennsylvania residents based on her study and compares it to the mean of 59.5% for the population of all Penn State University Park students. This app shows  how confidence intervals of that type would come out when there is no bias."),
                                 #h4("TIP: Click on an interval to show a histogram for the underlying sample."),
                                 h3(strong("Hypothesis: ")),
                                 uiOutput("nullhypo"),
@@ -100,7 +99,7 @@ dashboardPage(skin="purple",
                                             min= 30, max = 500, value = 30, step = 5),
                                 
                                 actionButton("new", "Generate 50 New Samples",icon("retweet")),
-                                bsPopover("new","Note","By clicking on this button, new 50 sample with the size you have input in each sample will be generated.",
+                                bsPopover("new","Note","Click to generate 50 new samples, each with  the sample size you have input.",
                                           trigger="hover",placement="right"),br(),
                                 br(),br(),
                                 
@@ -118,10 +117,10 @@ dashboardPage(skin="purple",
                                 wellPanel(plotOutput("CIplot",height = "600px", click = "plot_click"),br(),
                                           textOutput("CoverageRate")),
                                 br(),
-                                bsPopover("sampProp","Sample Bar Graph","This is the bar plot of the sample you selected on Confidence Interval Plot. The green line is the true percentage.",
+                                bsPopover("sampProp","Sample Bar Graph","This is the bar plot of the sample you selected on Confidence Interval Plot. The green line is the true proportion.",
                                           trigger="hover",placement="top"),br(),
                                 
-                                bsPopover("popMean","Population Bar Graph","This is the bar plot based on true percentage.",
+                                bsPopover("popMean","Population Bar Graph","This is the bar plot based on true proportion.",
                                           trigger="hover",placement="top"),br(),
                                 
                                 bsPopover("CIplot","Confidence Interval Plot","Click on an interval to show a histogram for the underlying sample.",
@@ -210,57 +209,55 @@ dashboardPage(skin="purple",
                               # img(src="2sample.png",height = 50,width = 350,algin = "middle"),
                               # h4("sqrt((standard error in first sample)^2+(standard error in second sample)^2)"),
                               #div(tableOutput('matrixScore'),style = "font-size:80%"), 
+                              
+                              br(),
                               h3(strong("Population info:")),
                               img(src="2016Diff.png",height = "100%", width = "100%",algin = "middle"),
+                              br(),
+                              br(),
+                              textOutput("pop"),
+                              br(),
+                              
                               #img(src="2016Diff.png",height = 100,width = 350,algin = "middle"),
                               # h4("difference between twp μ = 524 - 494 = 30"),
                               # h4("difference between two σ = sqrt(0.021+0.015) = 0.190"),
-                              h3(strong("Hypothesis: ")),
-                              h4("Assume there is no difference of penn residency percentage between University Park and Other Campuses"),
-                              h4("Ho: p(University Park) = p(Other Campuses)"),
-                              h4("Ha: p(University Park) ≠ p(Other Campuses)"),
-        
-                              wellPanel(
+                             
+                             
                                 h3(strong("New Sample Info")),
-                                h4("Penn student percentage in two locations are shown below"),
+                                p("(Penn student percentage in two locations are shown below)"),
                                 tableOutput("sampleinfotable"),
-                                uiOutput("Diffinfo")
-                              ),
+                                uiOutput("Diffinfo"),
+                                
+                              br(),
+                              wellPanel(
                                sliderInput("dlevel", "Confidence Level",
                                           min=.10, max = 0.99, value = 0.90, step = 0.01),
                                sliderInput("nSamp", "Sample Size for two groups",
                                           min=30, max = 150, value = 50, step = 5)
+                              )
                             ),
                             
                             mainPanel(
                               
-                              plotOutput("dpopMean",height = "300px"),
-                              bsPopover("dpopMean","Population Stacked Bar Graph","The two bars show precentage of Enrollment by Residency in University Park and Other Campuses.",
+                              plotOutput("dpopMean",height = "400px"),
+                              bsPopover("dpopMean","Population Stacked Bar Graph","The two bars show proportions of Enrollment by Residency in University Park and Other Campuses.",
                                         trigger="hover",placement="bottom"),br(),
-                              plotOutput("sampleDiff",height = "300px"),
-                              bsPopover("sampleDiff","Sample Stacked Bar Graphs","These stacked bar graphs show the generated sample proportions of penn residency in University Park and Other Campuses. The horizontal lines on each bar indicate the population proportions for the two groups.",
+                              plotOutput("sampleDiff",height = "400px"),
+                              bsPopover("sampleDiff","Sample Stacked Bar Graph","These stacked bar graphs show the generated sample proportions of penn residency in University Park and Other Campuses. The horizontal lines on each bar indicate the population proportions for the two groups.",
                                         trigger="hover",placement="bottom"),
                               actionButton("newSample", "Generate New Samples",icon("retweet")),
-                              bsPopover("newSample","Note","By clicking on this button, new sample with the size you input will be generated on the Sample Histogram.",
+                              bsPopover("newSample","Note","By clicking on this button, new sample with the size you input will be generated on the Sample Stacked Bar Graph.",
                                         trigger="hover",placement="bottom"),
                               
-                              splitLayout(
+                              
                                 wellPanel(
                                   checkboxInput("CIcheckbox","Show Confidence Interval:", FALSE), 
                                   tableOutput("CItable")
-                                ),
-                                wellPanel(
-                                  checkboxInput("testcheckbox","Show Test Output:", FALSE), 
-                                  tableOutput("testtable")
                                 )
-                              ),
+                               
+                              
                              
-                              wellPanel(
-                                checkboxInput("decisioncheckbox","Decision about the null hypothesis:", FALSE), 
-                                textOutput("decisionZ"),
-                                br(),
-                                textOutput("decisionP")
-                              )
+                             
                             )
                           )
                           
@@ -282,9 +279,9 @@ dashboardPage(skin="purple",
                     p(class = "hangingindent",
                       "Chang, W., Cheng, J., Allaire, J., Xie, Y., and McPherson, J. (2019), shiny: Web application framework for R, R Package. Available from https://CRAN.R-project.org/package=shiny"),
                     p(class = "hangingindent",
-                      "Frank E. Harrell, Jr. (2020), Confidence Intervals for Binomial Probability. We needed to bypass the loading of the foreign package for R 3.6.3, thus we are using the definition of the binconf which is all we needed from Hmisc. Available from https://CRAN.R-project.org/package=Hmisc"),
+                      "Harrell, F.E. (2020), Confidence Intervals for Binomial Probability. We needed to bypass the loading of the foreign package for R 3.6.3, thus we are using the definition of the binconf which is all we needed from Hmisc. Available from https://CRAN.R-project.org/package=Hmisc"),
                     p(class = "hangingindent",
-                      "Pruim, R., Kaplan, D., and Horton, N. (2020), mosaic: Project MOSAIC statistics and mathematics teaching utilities, R Package. Avaliable from https://CRAN.R-project.org/package=mosaic"),
+                      "Pruim, R., Kaplan, D.T., and Horton, N.J. (2020), mosaic: Project MOSAIC statistics and mathematics teaching utilities, R Package. Avaliable from https://CRAN.R-project.org/package=mosaic"),
                     p(class = "hangingindent",
                       "Wickham, H., Francois R., Henry L., and Muller K. (2020), dplyr: A Grammar of Data Manipulation, R Package. Available from https://cran.r-project.org/web/packages/dplyr/index.html"),
                     p(class = "hangingindent",

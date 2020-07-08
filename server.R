@@ -102,7 +102,7 @@ shinyServer(function(input, output,session) {
   
   output$design = renderUI({
     
-    h4("A researcher plans to take a random sample of size n students to do a survey about their experiences in studying at the University Park campus of Penn State University. However, she worries that sample results could be biased because the students who agree to participate might be different from those who don't (this would be an example of non-response bias). The researcher makes a confidence interval for the percentage of Penn State Students who are Pennsylvania residents based on her study. This app shows  how confidence intervals of that type would come out when there is no bias.")
+    h4("A researcher plans to take a random sample of size n students to do a survey about their experiences in studying at the University Park campus of Penn State University. However, she worries that sample results could be biased because the students who agree to participate might be different from those who don't (this would be an example of non-response bias). The researcher makes a confidence interval for the proportion of Penn State Students who are Pennsylvania residents based on her study. This app shows  how confidence intervals of that type would come out when there is no bias.")
     
   })
   
@@ -130,7 +130,7 @@ shinyServer(function(input, output,session) {
       
       labs(
         title = paste0("Population proportion for residency in UP = 0.595"),
-        x = "Whether PA Resident",
+        x = "Pennsylvania residency status",
         y = "Proportion Enrollment by Residency")
     #barplot(my_vector,col=rgb(0.2,0.4,0.6,0.6),ylim=c(0,1), ylab="precentage")
     
@@ -387,8 +387,8 @@ shinyServer(function(input, output,session) {
   output$testdesign = renderUI({
     if(input$testdesigncheckbox)
     {
-      h4("A researcher wants to sample a group of n University Park students and n students from other Penn State campuses to ask them about their experiences in college.  Although the percentage of Pennsylvania residents is 24.9% lower at University Park, a critic believes her sampling technique would provide a sample of students with a proportion (p) that does not depend on the campus (the null hypothesis). The researcher uses her samples to conduct a test of that null hypothesis and this app shows how that test would behave when the sampling is really unbiased and the University Park campus has a proportion that is 0.249 lower lower. ")
-    }
+      paste("A researcher wants to sample a group of n University Park students and n students from other Penn State campuses to ask them about their experiences in college. Although the proportion of Pennsylvania residents is 0.249 lower at University Park, a critic believes her sampling technique might change that difference. The researcher uses her samples to create a confidence interval for the difference between the University Park campus and the Commonwealth campuses for the proportion who are Pennsylvania residents.")
+      }
   })
   
   
@@ -414,17 +414,23 @@ shinyServer(function(input, output,session) {
     #                           Out-of-State_Students 0.405	 0.156",
     #                   sep = "",header = TRUE)
   
-    dfPop <- data.frame(types = rep(c("Pennsylvania_Students", "Out-of-State_Students"), each=2),
+    dfPop <- data.frame(types = rep(c("Pennsylvania Students", "Out-of-State Students"), each=2),
                            location=rep(c("University Park", "Other Campuses"),2),
                            samplepercent=c(0.595,0.844,0.405,0.156))
                            
-    ggplot(dfPop,aes(x = location,y = samplepercent, fill = types)) +
-      geom_bar(position = position_fill(),stat="identity", width=0.3) +
-      scale_y_continuous(labels = percent_format()) +
+    g1<-ggplot2::ggplot(data = dfPop,aes(x = location,y = samplepercent, fill = types)) +
+      
+      ggplot2::geom_bar(position = position_fill(),stat="identity", width=0.3) +
       scale_fill_brewer(palette="Paired")+
       labs(
-        title = paste0("population proportion(diff) = -24.9%, σ(p(UP)-p(Others)) = ",round(sqrt(0.595*0.405 + 0.844*0.156),3)),
-        y = "Enrollment by Percentage")
+        title = paste0("Population Stacked Bar Graph"), 
+        y = "Enrollment by Proportion",
+        x = "Location")
+    g1+ggplot2::theme(
+      plot.caption = element_text(size = 18),
+      text = element_text(size = 18)
+    )
+    
 
   })
   
@@ -449,22 +455,32 @@ shinyServer(function(input, output,session) {
     )
     input$newSample
     
-    dfSample <- data.frame(types = rep(c("Pennsylvania_Students", "Out-of-State_Students"), each=2),
+    dfSample <- data.frame(types = rep(c("Pennsylvania Students", "Out-of-State Students"), each=2),
                           location=rep(c("University Park", "Other Campuses"),2),
                           samplepercent=c(mean(UPS()),mean(UWS()),1-mean(UPS()),1-mean(UWS())),
                           ref=c(0.595,0.844), 2)
     
 
-    ggplot(dfSample,aes(x = location,y = samplepercent, fill = types)) +
+    g2<-ggplot2::ggplot(data=dfSample,aes(x = location,y = samplepercent, fill = types)) +
       geom_bar(position = position_fill(),stat="identity", width=0.3) +
-      scale_y_continuous(labels = percent_format()) +
       scale_fill_brewer(palette="Set2")+
       geom_errorbar(aes(ymin = ref, ymax = ref, col = "True proportion"), width = 0.3, colour = "#191919", size = 1) + 
       labs(
-        title = paste0("phat(diff) = ", percent(Diff()),", σ(phat(UP)-phat(Others) = ",round(standardError(),3),", UP sample = ",dN(),", others sample = ",dN()),
-        x ="")
+        title = paste0("Sample Stacked Bar Graph"),
+        y ="Sample Enrollment by Proportion",
+        x="Location")
+  
+      
+    g2+ggplot2::theme(
+      plot.caption = element_text(size = 18),
+      text = element_text(size = 18)
+    )
   })
-
+  
+  output$pop<- renderText({
+    paste("Population proportion(diff) = -0.249, Population standard deviation for the difference in proportions = ",round(sqrt(0.595*0.405 + 0.844*0.156),3))
+  })
+  
   
   dlowerbound <- reactive({
     Diff() + qnorm(dalpha()) * standardError()
@@ -480,7 +496,7 @@ shinyServer(function(input, output,session) {
     )
     if(input$CIcheckbox)
     {
-      ctable = matrix(c(percent(dlowerbound()), percent(dupperbound())),nrow=1)
+      ctable = matrix(c(dlowerbound(), dupperbound()),nrow=1)
       colnames(ctable) = c("Lower bound","Upper bound")
       ctable
     }
@@ -510,10 +526,10 @@ shinyServer(function(input, output,session) {
       need(is.numeric(input$nSamp),
            message = "")
     )
-    paste("The difference between UP and other campuses sample (UP-other) is ", percent(Diff()))
+    paste("The difference between UP and other campuses sample (UP-other) is ", Diff(),", Sample standard deviation for the difference in proportions = ",round(standardError(),3),", UP sample = ",dN(),", others sample = ",dN())
   })
   
-  output$testtable = renderTable({
+  output$table = renderTable({
     validate(
       need(is.numeric(input$nSamp),
            message = "Please input sample size")
@@ -542,7 +558,7 @@ shinyServer(function(input, output,session) {
         paste("Since it is observed that |z| = ",abs(round(zstatistic(),3))," is less than z*score = ",round(zstandard(),3),", the null hypothesis provides a reasonable explanation of the data so we can NOT conclude that University Park campus has a different proportion of Pennsylvania residents  when student's are chosen by the researcher's sampling procedure.")
         
       }else{
-        paste("Since it is observed that |z| = ",abs(round(zstatistic(),3))," is larger than z*score = ",round(zstandard(),3),", the null hypothesis is not a reasonable explanation of the data so we have evidence that there is a difference between the percentage of Pennsylvania residents at the University Park campus and the percentage at other campuses when students are chosen by the researcher's sampling procedure.")
+        paste("Since it is observed that |z| = ",abs(round(zstatistic(),3))," is larger than z*score = ",round(zstandard(),3),", the null hypothesis is not a reasonable explanation of the data so we have evidence that there is a difference between the proportion of Pennsylvania residents at the University Park campus and the proportion at other campuses when students are chosen by the researcher's sampling procedure.")
       }
     }
     
@@ -558,7 +574,7 @@ shinyServer(function(input, output,session) {
       if(pvalue() >= (2*dalpha())){
         paste("Since it is observed that p-value = ",round(pvalue(),3)," is larger than ",round(2*dalpha(),3),", the null hypothesis provides a reasonable explanation of the data so we can NOT conclude that University Park campus has a different proportion of Pennsylvania residents  when student's are chosen by the researcher's sampling procedure.")
       }else{
-        paste("Since it is observed that p-value = ",round(pvalue(),3)," is less than ",round(2*dalpha(),3),", the null hypothesis is not a reasonable explanation of the data so we have evidence that there is a difference between the percentage of Pennsylvania residents at the University Park campus and the percentage at other campuses when students are chosen by the researcher's sampling procedure.")
+        paste("Since it is observed that p-value = ",round(pvalue(),3)," is less than ",round(2*dalpha(),3),", the null hypothesis is not a reasonable explanation of the data so we have evidence that there is a difference between the proportion of Pennsylvania residents at the University Park campus and the proportion at other campuses when students are chosen by the researcher's sampling procedure.")
       }
     }
   })
