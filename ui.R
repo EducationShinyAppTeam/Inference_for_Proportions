@@ -54,14 +54,14 @@ dashboardPage(skin="purple",
                           div(style = "text-align: center", bsButton("explore", "Explore", icon("bolt"), size = "large",class = "circle grow")),
                           br(),
                           h2("Acknowledgements"),
-                          p("This app was developed and programmed by  Yingjie (Chelsea) Wang and updated by by Zhuolin Luo in 2020."),
+                          p("This app was developed and programmed by  Yingjie (Chelsea) Wang and updated by Zhuolin Luo in 2020."),
                           
                           br(),
                           p(
                             br(),
                             br(),
                             br(),
-                            div(class = "updated", "Last Update: 07/02/2020 by ZL.")
+                            div(class = "updated", "Last Update: 07/13/2020 by ZL.")
                           )
                   ),
                   
