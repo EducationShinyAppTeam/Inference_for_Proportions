@@ -326,10 +326,10 @@ shinyServer(function(input, output,session) {
       output$pic1 = renderUI({
         
         if(input$question1 == 1.645 || input$question1 == 1.65 || input$question1 == 1.6 || input$question1 == 2){
-          img(src = "check.png", width = 25)
+          img(src = "check.png", alt = "it means the answer is correct", width = 25)
         }
         else{
-          img(src = "cross.png", width = 25)
+          img(src = "cross.png", alt = "it means the answer is wrong", width = 25)
         }
       })}
     
@@ -337,10 +337,10 @@ shinyServer(function(input, output,session) {
     if (input$question2!=''){
       output$pic2 = renderUI({
         if(input$question2 == 1.960 || input$question2 == 1.96 || input$question2 == 2.0){
-          img(src = "check.png", width = 25)
+          img(src = "check.png", alt = "it means the answer is correct", width = 25)
         }
         else{
-          img(src = "cross.png", width = 25)
+          img(src = "cross.png", alt = "it means the answer is wrong", width = 25)
         }
       })}
     
@@ -348,10 +348,10 @@ shinyServer(function(input, output,session) {
     if (input$question3!=''){
       output$pic3 = renderUI({
         if(input$question3 == 2.576 || input$question3 == 2.58 || input$question3 == 2.6 || input$question3 == 3){
-          img(src = "check.png", width = 25)
+          img(src = "check.png", alt = "it means the answer is correct", width = 25)
         }
         else{
-          img(src = "cross.png", width = 25)
+          img(src = "cross.png", alt = "it means the answer is wrong", width = 25)
         }
       })}
     
@@ -509,6 +509,13 @@ shinyServer(function(input, output,session) {
   zstatistic <- reactive({
     Diff()/standardError()
     
+  })
+  
+  output$popInfo = renderTable({
+    
+    ctable = matrix(c(percent(0.595), percent(0.844)), nrow=1)
+    colnames(ctable) = c("University Park","Other Campuses")
+    ctable
   })
   
   output$sampleinfotable = renderTable({
