@@ -29,7 +29,7 @@ dashboardPage(skin="purple",
                   menuItem("Overview", tabName = "over", icon = icon("dashboard")),
                   menuItem("UP Residency Perentage", tabName = "UPRes", icon = icon("wpexplorer")),
                   menuItem("Difference of Proportions", tabName = "popdiff", icon = icon("wpexplorer")),
-                  menuItem("Finding the z∗ Multiplier", tabName = "findz", icon = icon("wpexplorer")),
+                  menuItem("Finding the \\(Z^*\\) Multiplier", tabName = "findz", icon = icon("wpexplorer")),
                   menuItem("References",tabName = "Ref",icon = icon("leanpub"))
                 ),
                 #PSU Logo
@@ -56,10 +56,7 @@ dashboardPage(skin="purple",
                           div(style = "text-align: center", bsButton("explore", "Explore", icon("bolt"), size = "large",class = "circle grow")),
                           br(),
                           h2("Acknowledgements"),
-                          p("This app was developed and programmed by  Yingjie (Chelsea) Wang and updated by Zhuolin Luo in 2020."),
-                          
-                          br(),
-                          p(
+                          p("This app was developed and programmed by  Yingjie (Chelsea) Wang and updated by Zhuolin Luo in 2020.",
                             br(),
                             br(),
                             br(),
@@ -68,15 +65,17 @@ dashboardPage(skin="purple",
                   ),
                 tabItem(tabName = "UPRes",
                           fluidPage(
-                            titlePanel("Confidence Intervals for Enrollment by Residency in 2016 (p = 59.5%)"),
-                            box(
-                              title = strong(tags$em("Context")), # This is the header of the box. Consider using "Story Context"
+                            fluidRow(
+                              h2("Confidence Intervals for Enrollment by Residency in 2016 (p = 59.5%)"),
+                              box(
+                              title = strong("Context"), # This is the header of the box. Consider using "Story Context"
                               status = "primary",
                               collapsible = TRUE,
                               collapsed = FALSE,
                               width = '100%', 
                               "A researcher plans to take a random sample of size n students to do a survey about their experiences in studying at the University Park campus of Penn State University. However, she worries that sample results could be biased because the students who agree to participate might be different from those who don't (this would be an example of non-response bias). The researcher makes a confidence interval for the proportion of Penn State Students who are Pennsylvania residents based on her study. This app shows  how confidence intervals of that type would come out when there is no bias."
-                              ),
+                              )
+                            ),
                             fluidRow(
                               column(4,
                                 wellPanel(
@@ -142,13 +141,14 @@ dashboardPage(skin="purple",
                                      
                   tabItem(tabName = "findz",
                           fluidPage(
-                            titlePanel("Confidence Intervals for a population mean (μ = 0 and σ = 1)"),
-                            br(),
+                            fluidRow(
+                              h2("Confidence Intervals for a population mean (μ = 0 and σ = 1)")
+                            ),
                             fluidRow(
                               column(4,
                                      wellPanel(
-                                       h3(strong("Finding the z∗ Multiplier")),
-                                       p("The value of the z∗ multiplier is dependent on the level of confidence."),
+                                       h3(strong("Finding the \\(Z^*\\) Multiplier")),
+                                       p("The value of the \\(Z^*\\) multiplier is dependent on the level of confidence."),
                                        sliderInput("zlevel", "Confidence Level", min=.50, max = 0.99, value = 0.90, step = 0.01)
                                      )
                               ),
@@ -160,7 +160,7 @@ dashboardPage(skin="purple",
                                                    `confidence interval plot for standard normal distribution`)
                                                    })"
                                      )),
-                                     bsPopover("zplot","Z Score Plot","This is the confidence interval plot for standard normal distribution. Multiplier Number (z*) is the absolute value of the boundary value. Use the value showed on this graph for following questions",
+                                     bsPopover("zplot","Z Score Plot","This is the confidence interval plot for standard normal distribution. Multiplier Number (\\(Z^*\\)) is the absolute value of the boundary value. Use the value showed on this graph for following questions",
                                                 trigger="hover",placement="bottom")
                               )
                             ),
@@ -168,13 +168,13 @@ dashboardPage(skin="purple",
                               wellPanel(
                                        textOutput("feedback"),
                                        h3("Quiz"),
-                                       h4("What is z∗  Multiplier for 90% confidence level?",style="font-size:90%"),
+                                       h4("What is \\(Z^*\\) Multiplier for 90% confidence level?",style="font-size:90%"),
                                        div(style="display:inline-block",textInput("question1", " ", width='2cm',"")),
                                        div(style="display:inline-block",htmlOutput('pic1')),
-                                       h4("What is z∗  Multiplier for 95% confidence level?",style="font-size:90%"),
+                                       h4("What is \\(Z^*\\) Multiplier for 95% confidence level?",style="font-size:90%"),
                                        div(style="display:inline-block",textInput("question2", " ", width='2cm',"")),
                                        div(style="display:inline-block",htmlOutput('pic2')),
-                                       h4("What is z∗  Multiplier for 99% confidence level?",style="font-size:90%"),
+                                       h4("What is \\(Z^*\\) Multiplier for 99% confidence level?",style="font-size:90%"),
                                        div(style="display:inline-block",textInput("question3", " ", width='2cm',"")),
                                        div(style="display:inline-block",htmlOutput('pic3')),
                                        h4("Increasing the confidence level makes the confidence interval wider.",style="font-size:90%"),
@@ -189,19 +189,22 @@ dashboardPage(skin="purple",
                           ),
 
                   tabItem(tabName = "popdiff",
-                          titlePanel("Tests for Enrollment by Residency between University Park and Commonwealth Campuses"),
-                          box(
-                            title = strong(tags$em("Context")), # This is the header of the box. Consider using "Story Context"
-                            status = "primary",
-                            collapsible = TRUE,
-                            collapsed = FALSE,
-                            width = '100%', 
-                            "A researcher wants to sample a group of n University Park students and n students from other Penn State campuses to ask them about their experiences in college. 
-                            Although the proportion of Pennsylvania residents is 0.249 lower at University Park, a critic believes her sampling technique might change that difference. 
-                            The researcher uses her samples to create a confidence interval for the difference between the University Park campus and the Commonwealth campuses for the proportion who are Pennsylvania residents."
+                          fluidPage(
+                            fluidRow(
+                              h2("Tests for Enrollment by Residency between University Park and Commonwealth Campuses"),
+                              box(
+                                title = strong("Context"), # This is the header of the box. Consider using "Story Context"
+                                status = "primary",
+                                collapsible = TRUE,
+                                collapsed = FALSE,
+                                width = '100%', 
+                                "A researcher wants to sample a group of n University Park students and n students from other Penn State campuses to ask them about their experiences in college. 
+                                Although the proportion of Pennsylvania residents is 0.249 lower at University Park, a critic believes her sampling technique might change that difference. 
+                                The researcher uses her samples to create a confidence interval for the difference between the University Park campus and the Commonwealth campuses for the proportion who are Pennsylvania residents."
+                                )
                             ),
-                          fluidRow(
-                            column(4,
+                            fluidRow(
+                              column(4,
                                    wellPanel(
                                      h3(strong("Population info:")),
                                      tableOutput("popInfo"),
@@ -216,7 +219,7 @@ dashboardPage(skin="purple",
                                      br()
                                    )
                             ),
-                            column(8,
+                              column(8,
                                    plotOutput("dpopMean",height = "300px"),
                                    tags$script(HTML(
                                      "$(document).ready(function() {
@@ -252,6 +255,8 @@ dashboardPage(skin="purple",
                                    tableOutput("CItable"))
                             
                           )
+                          )
+
                   ),
  
                   tabItem(

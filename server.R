@@ -562,10 +562,10 @@ shinyServer(function(input, output,session) {
     if(input$decisioncheckbox)
     {
       if(abs(zstatistic()) <= zstandard()){
-        paste("Since it is observed that |z| = ",abs(round(zstatistic(),3))," is less than z*score = ",round(zstandard(),3),", the null hypothesis provides a reasonable explanation of the data so we can NOT conclude that University Park campus has a different proportion of Pennsylvania residents  when student's are chosen by the researcher's sampling procedure.")
+        paste("Since it is observed that |z| = ",abs(round(zstatistic(),3))," is less than \\(Z^*\\) score = ",round(zstandard(),3),", the null hypothesis provides a reasonable explanation of the data so we can NOT conclude that University Park campus has a different proportion of Pennsylvania residents  when student's are chosen by the researcher's sampling procedure.")
         
       }else{
-        paste("Since it is observed that |z| = ",abs(round(zstatistic(),3))," is larger than z*score = ",round(zstandard(),3),", the null hypothesis is not a reasonable explanation of the data so we have evidence that there is a difference between the proportion of Pennsylvania residents at the University Park campus and the proportion at other campuses when students are chosen by the researcher's sampling procedure.")
+        paste("Since it is observed that |z| = ",abs(round(zstatistic(),3))," is larger than \\(Z^*\\) score = ",round(zstandard(),3),", the null hypothesis is not a reasonable explanation of the data so we have evidence that there is a difference between the proportion of Pennsylvania residents at the University Park campus and the proportion at other campuses when students are chosen by the researcher's sampling procedure.")
       }
     }
     
