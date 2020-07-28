@@ -4,7 +4,7 @@ library(shinyBS)
 library(boastUtils)
 
 ## App Meta Data----------------------------------------------------------------
-APP_TITLE  <<- "Inference for proportions"
+APP_TITLE  <<- "Inference for Proportions"
 APP_DESCP  <<- paste(
   "This app shows how the confidence level and sample size affect the 
   outcome confidence interval for a single proportion under the null hypothesis
