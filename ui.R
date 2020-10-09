@@ -18,6 +18,14 @@ dashboardPage(skin="purple",
               dashboardHeader(
                 title="Inference for Proportions",
                 titleWidth=250,
+                tags$li(class="dropdown",
+                        actionLink("info", icon("info"), class="myClass")),
+                tags$li(
+                  class = "dropdown",
+                  tags$a(target = "_blank", icon("comments"),
+                         href = "https://pennstate.qualtrics.com/jfe/form/SV_7TLIkFtJEJ7fEPz?appName=Inference_for_Proportions"
+                  )
+                ),
                 tags$li(class = "dropdown",
                         tags$a(href='https://shinyapps.science.psu.edu/',
                                icon("home")))
@@ -25,7 +33,7 @@ dashboardPage(skin="purple",
               #Sidebar
               dashboardSidebar(
                 width = 250,
-                sidebarMenu(id = "tabs",
+                sidebarMenu(id = "pages",
                             menuItem("Overview", tabName = "over", icon = icon("dashboard")),
                             menuItem("UP Residency Perentage", tabName = "UPRes", icon = icon("wpexplorer")),
                             menuItem("Difference of Proportions", tabName = "popdiff", icon = icon("wpexplorer")),
