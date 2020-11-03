@@ -1165,8 +1165,8 @@ server <- function(input, output, session) {
       residency = rep(c("Pennsylvania Students", "Out-of-State Students"), each = 2),
       location = rep(c("University Park", "Other Campuses"), times = 2),
       proportion = c(mean(UPS()), mean(UWS()), 1 - mean(UPS()), 1 - mean(UWS())),
-      ref = c(0.595, 0.844), # What is the purpose of this line?
-      2 # What is the purpose of this line?
+      ref = c(0.595, 0.844), # TODO: What is the purpose of this line?
+      2 # TODO: What is the purpose of this line?
     )
 
     ggplot(
