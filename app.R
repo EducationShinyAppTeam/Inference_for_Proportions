@@ -6,16 +6,6 @@ library(boastUtils)
 library(dplyr)
 library(ggplot2)
 
-## App Meta Data----------------------------------------------------------------
-APP_TITLE <<- "Confidence Interval for One or Two Proportions"
-APP_DESCP <<- paste(
-  "This app shows how the confidence level and sample size affect the
-  outcome confidence interval for a single proportion under the null hypothesis
-  of no bias. The app also explores the same issues for a confidence interval
-  for the difference between two population proportions."
-)
-## End App Meta Data------------------------------------------------------------
-
 # Global constants, functions, and data ----
 #-------------------------------------------------------------------------------
 #  Title: Confidence Intervals for Binomial Probability
