@@ -985,19 +985,24 @@ server <- function(input, output, session) {
       ),
       errorClass = "leftParagraphError"
     )
-    if (
-      (input$question1 == 1.645 | input$question1 == 1.65 |
-        input$question1 == 1.64)
-      & (input$question2 == 1.960)
-      & (input$question3 == 2.576 | input$question3 == 2.58 |
-          input$question3 == 2.6)
-      & (input$question4 == "y")) {
-      cat("All correct. Great Job!")
-    }
 
     ## Render pic1
     if (input$question1 != "") {
       success <- abs(input$question1) - 1.645 <= 0.005
+      
+      ### Store xAPI statement ----
+      stmt <- boastUtils::generateStatement(
+        session,
+        verb = "answered",
+        object = "shiny-tab-findz",
+        description = "What is Z* Multiplier for 90% confidence level?",
+        interactionType = "numeric",
+        response = input$question1,
+        success = success
+      )
+      
+      boastUtils::storeStatement(session, stmt)
+      
       output$pic1 <- boastUtils::renderIcon(
         icon = ifelse(
           success,
@@ -1010,24 +1015,25 @@ server <- function(input, output, session) {
         ),
         width = 36
       )
-
-      ### Store xAPI statement ----
-      stmt <- boastUtils::generateStatement(
-        session,
-        verb = "answered",
-        object = "shiny-tab-findz",
-        description = "What is Z* Multiplier for 90% confidence level?",
-        interactionType = "numeric",
-        response = input$question1,
-        success = success
-      )
-
-      invisible(boastUtils::storeStatement(session, stmt))
     }
 
     ## Render pic2
     if (input$question2 != "") {
       success <- abs(input$question2) - 1.960 <= 0.005
+      
+      ### Store xAPI statement ----
+      stmt <- boastUtils::generateStatement(
+        session,
+        verb = "answered",
+        object = "shiny-tab-findz",
+        description = "What is Z* Multiplier for 95% confidence level?",
+        interactionType = "numeric",
+        response = input$question2,
+        success = success
+      )
+      
+      boastUtils::storeStatement(session, stmt)
+      
       output$pic2 <- boastUtils::renderIcon(
         icon = ifelse(
           success,
@@ -1040,24 +1046,25 @@ server <- function(input, output, session) {
         ),
         width = 36 # Note this is larger than what you currently have
       )
-
-      ### Store xAPI statement ----
-      stmt <- boastUtils::generateStatement(
-        session,
-        verb = "answered",
-        object = "shiny-tab-findz",
-        description = "What is Z* Multiplier for 95% confidence level?",
-        interactionType = "numeric",
-        response = input$question2,
-        success = success
-      )
-
-      invisible(boastUtils::storeStatement(session, stmt))
     }
 
     ## Render pic3
     if (input$question3 != "") {
       success <- abs(input$question3) - 2.576 <= 0.005
+      
+      ### Store xAPI statement ----
+      stmt <- boastUtils::generateStatement(
+        session,
+        verb = "answered",
+        object = "shiny-tab-findz",
+        description = "What is Z* Multiplier for 99% confidence level?",
+        interactionType = "numeric",
+        response = input$question3,
+        success = success
+      )
+      
+      boastUtils::storeStatement(session, stmt)
+      
       output$pic3 <- boastUtils::renderIcon(
         icon = ifelse(
           success,
@@ -1070,33 +1077,12 @@ server <- function(input, output, session) {
         ),
         width = 36
       )
-
-      ### Store xAPI statement ----
-      stmt <- boastUtils::generateStatement(
-        session,
-        verb = "answered",
-        object = "shiny-tab-findz",
-        description = "What is Z* Multiplier for 99% confidence level?",
-        interactionType = "numeric",
-        response = input$question3,
-        success = success
-      )
-
-      invisible(boastUtils::storeStatement(session, stmt))
     }
 
     ## Render pic4
     if (input$question4 != "select") {
       success <- input$question4 == "y"
-      output$pic4 <- boastUtils::renderIcon(
-        icon = ifelse(
-          success,
-          "correct",
-          "incorrect"
-        ),
-        width = 36
-      )
-
+      
       ### Store xAPI statement ----
       stmt <- boastUtils::generateStatement(
         session,
@@ -1108,8 +1094,27 @@ server <- function(input, output, session) {
         response = input$question4,
         success = success
       )
-
-      invisible(boastUtils::storeStatement(session, stmt))
+      
+      boastUtils::storeStatement(session, stmt)
+      
+      output$pic4 <- boastUtils::renderIcon(
+        icon = ifelse(
+          success,
+          "correct",
+          "incorrect"
+        ),
+        width = 36
+      )
+    }
+    
+    if (
+      (input$question1 == 1.645 | input$question1 == 1.65 |
+       input$question1 == 1.64)
+      & (input$question2 == 1.960)
+      & (input$question3 == 2.576 | input$question3 == 2.58 |
+         input$question3 == 2.6)
+      & (input$question4 == "y")) {
+      cat("All correct. Great Job!")
     }
   })
 
@@ -1124,7 +1129,6 @@ server <- function(input, output, session) {
   dN <- reactive({
     as.integer(input$nSamp)
   })
-
 
   standardError <- reactive({
     sqrt(0.595 * 0.405 / dN() + 0.844 * 0.156 / dN())
