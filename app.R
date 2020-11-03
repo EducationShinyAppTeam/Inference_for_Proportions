@@ -4,10 +4,7 @@ library(shinydashboard)
 library(shinyBS)
 library(boastUtils)
 library(dplyr)
-library(Matrix)
-library(mosaic)
 library(ggplot2)
-library(scales)
 
 ## App Meta Data----------------------------------------------------------------
 APP_TITLE  <<- "Confidence Interval for One or Two Proportions"
@@ -458,7 +455,7 @@ ui <- list(
                 tableOutput("CItable"),
                 checkboxInput(
                   inputId = "CIcheckbox",
-                  label = "Show Confidence Interval:",
+                  label = "Show Confidence Interval",
                   value = FALSE
                 )
               )
@@ -614,27 +611,13 @@ ui <- list(
            shiny: Web application framework for R, R Package.
            Available from https://CRAN.R-project.org/package=shiny"),
           p(class = "hangingindent",
-            "Harrell, F.E. (2020), Confidence Intervals for Binomial Probability.
-           We needed to bypass the loading of the foreign package for R 3.6.3,
-           thus we are using the definition of the binconf which is all we needed
-           from Hmisc. Available from https://CRAN.R-project.org/package=Hmisc"),
-          p(class = "hangingindent",
-            "Pruim, R., Kaplan, D.T., and Horton, N.J. (2020), mosaic:
-           Project MOSAIC statistics and mathematics teaching utilities,
-           R Package. Avaliable from https://CRAN.R-project.org/package=mosaic"),
-          p(class = "hangingindent",
             "Wickham, H., Francois R., Henry L., and Muller K. (2020), dplyr:
            A Grammar of Data Manipulation, R Package. Available from
            https://cran.r-project.org/web/packages/dplyr/index.html"),
           p(class = "hangingindent",
             "Wickham, H. (2016), ggplot2: Elegant graphics for data analysis,
-           R Package, New York: Springer-Verlag. Available from https://ggplot2.tidyverse.org"),
-          p(class = "hangingindent",
-            "Wickham, H., Seidel, D., and R Studio. (2020), scales: Scale
-           function for visualization, R Package. Availabel from
-           https://CRAN.R-project.org/package=scales")
+           R Package, New York: Springer-Verlag. Available from https://ggplot2.tidyverse.org")
         )
-
       )#end of tabItem
     )#end of dashboardBody
   )
