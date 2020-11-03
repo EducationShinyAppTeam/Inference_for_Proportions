@@ -7,8 +7,8 @@ library(dplyr)
 library(ggplot2)
 
 ## App Meta Data----------------------------------------------------------------
-APP_TITLE  <<- "Confidence Interval for One or Two Proportions"
-APP_DESCP  <<- paste(
+APP_TITLE <<- "Confidence Interval for One or Two Proportions"
+APP_DESCP <<- paste(
   "This app shows how the confidence level and sample size affect the
   outcome confidence interval for a single proportion under the null hypothesis
   of no bias. The app also explores the same issues for a confidence interval
@@ -26,80 +26,100 @@ APP_DESCP  <<- paste(
 #  We needed to bypass the loading of the foreign package for R 3.6.3, thus
 #  we are using the definition of the binconf which is all we needed from Hmisc.
 #-------------------------------------------------------------------------------
-binconf <- function (x, n, alpha = 0.05,
-                     method = c("wilson", "exact", "asymptotic", "all"),
-                     include.x = FALSE, include.n = FALSE, return.df = FALSE)
-{
+binconf <- function(x, n, alpha = 0.05,
+                    method = c("wilson", "exact", "asymptotic", "all"),
+                    include.x = FALSE, include.n = FALSE, return.df = FALSE) {
   method <- match.arg(method)
   bc <- function(x, n, alpha, method) {
     nu1 <- 2 * (n - x + 1)
     nu2 <- 2 * x
-    ll <- if (x > 0)
-      x/(x + qf(1 - alpha/2, nu1, nu2) * (n - x + 1))
-    else 0
+    ll <- if (x > 0) {
+      x / (x + qf(1 - alpha / 2, nu1, nu2) * (n - x + 1))
+    } else {
+      0
+    }
     nu1p <- nu2 + 2
     nu2p <- nu1 - 2
-    pp <- if (x < n)
-      qf(1 - alpha/2, nu1p, nu2p)
-    else 1
-    ul <- ((x + 1) * pp)/(n - x + (x + 1) * pp)
-    zcrit <- -qnorm(alpha/2)
+    pp <- if (x < n) {
+      qf(1 - alpha / 2, nu1p, nu2p)
+    } else {
+      1
+    }
+    ul <- ((x + 1) * pp) / (n - x + (x + 1) * pp)
+    zcrit <- -qnorm(alpha / 2)
     z2 <- zcrit * zcrit
-    p <- x/n
-    cl <- (p + z2/2/n + c(-1, 1) * zcrit *
-             sqrt((p * (1 - p) + z2/4/n)/n))/(1 + z2/n)
-    if (x == 1)
-      cl[1] <- -log(1 - alpha)/n
-    if (x == (n - 1))
-      cl[2] <- 1 + log(1 - alpha)/n
-    asymp.lcl <- x/n - qnorm(1 - alpha/2) * sqrt(((x/n) *
-                                                    (1 - x/n))/n)
-    asymp.ucl <- x/n + qnorm(1 - alpha/2) * sqrt(((x/n) *
-                                                    (1 - x/n))/n)
+    p <- x / n
+    cl <- (p + z2 / 2 / n + c(-1, 1) * zcrit *
+      sqrt((p * (1 - p) + z2 / 4 / n) / n)) / (1 + z2 / n)
+    if (x == 1) {
+      cl[1] <- -log(1 - alpha) / n
+    }
+    if (x == (n - 1)) {
+      cl[2] <- 1 + log(1 - alpha) / n
+    }
+    asymp.lcl <- x / n - qnorm(1 - alpha / 2) * sqrt(((x / n) *
+      (1 - x / n)) / n)
+    asymp.ucl <- x / n + qnorm(1 - alpha / 2) * sqrt(((x / n) *
+      (1 - x / n)) / n)
     res <- rbind(c(ll, ul), cl, c(asymp.lcl, asymp.ucl))
-    res <- cbind(rep(x/n, 3), res)
-    switch(method, wilson = res[2, ], exact = res[1, ], asymptotic = res[3,
-    ], all = res, res)
+    res <- cbind(rep(x / n, 3), res)
+    switch(method, wilson = res[2, ], exact = res[1, ], asymptotic = res[3, ], all = res, res)
   }
-  if ((length(x) != length(n)) & length(x) == 1)
+  if ((length(x) != length(n)) & length(x) == 1) {
     x <- rep(x, length(n))
-  if ((length(x) != length(n)) & length(n) == 1)
+  }
+  if ((length(x) != length(n)) & length(n) == 1) {
     n <- rep(n, length(x))
+  }
   if ((length(x) > 1 | length(n) > 1) & method == "all") {
     method <- "wilson"
     warning("method=all will not work with vectors...setting method to wilson")
   }
   if (method == "all" & length(x) == 1 & length(n) == 1) {
     mat <- bc(x, n, alpha, method)
-    dimnames(mat) <- list(c("Exact", "Wilson", "Asymptotic"),
-                          c("PointEst", "Lower", "Upper"))
-    if (include.n)
+    dimnames(mat) <- list(
+      c("Exact", "Wilson", "Asymptotic"),
+      c("PointEst", "Lower", "Upper")
+    )
+    if (include.n) {
       mat <- cbind(N = n, mat)
-    if (include.x)
+    }
+    if (include.x) {
       mat <- cbind(X = x, mat)
-    if (return.df)
+    }
+    if (return.df) {
       mat <- as.data.frame(mat)
+    }
     return(mat)
   }
   mat <- matrix(ncol = 3, nrow = length(x))
-  for (i in 1:length(x)) mat[i, ] <- bc(x[i], n[i], alpha = alpha,
-                                        method = method)
-  dimnames(mat) <- list(rep("", dim(mat)[1]), c("PointEst",
-                                                "Lower", "Upper"))
-  if (include.n)
+  for (i in 1:length(x)) {
+    mat[i, ] <- bc(x[i], n[i],
+      alpha = alpha,
+      method = method
+    )
+  }
+  dimnames(mat) <- list(rep("", dim(mat)[1]), c(
+    "PointEst",
+    "Lower", "Upper"
+  ))
+  if (include.n) {
     mat <- cbind(N = n, mat)
-  if (include.x)
+  }
+  if (include.x) {
     mat <- cbind(X = x, mat)
-  if (return.df)
+  }
+  if (return.df) {
     mat <- as.data.frame(mat, row.names = NULL)
+  }
   mat
 }
-#End of Harrell's code----------------------------------------------------------
+# End of Harrell's code----------------------------------------------------------
 
 ## Single Proportion Population Plot ----
 upResData <- data.frame(
-  status = c("PA Students","Non-PA Students"),
-  proportion = c(0.595, 1-0.595)
+  status = c("PA Students", "Non-PA Students"),
+  proportion = c(0.595, 1 - 0.595)
 )
 
 upResidency <- ggplot(
@@ -107,15 +127,15 @@ upResidency <- ggplot(
   mapping = aes(x = status, y = proportion)
 ) +
   geom_bar(
-    stat='identity',
-    width=0.3,
+    stat = "identity",
+    width = 0.3,
     fill = psuPalette[6]
   ) +
   geom_hline(
     yintercept = 0.595,
     color = boastPalette[3],
     size = 1.2
-  )+
+  ) +
   labs(
     title = "Residency Breakdown for University Park",
     x = "Residency status",
@@ -136,7 +156,7 @@ upResidency <- ggplot(
 dfPop <- data.frame(
   residency = rep(c("Pennsylvania Students", "Out-of-State Students"), each = 2),
   location = rep(c("University Park", "Other Campuses"), times = 2),
-  proportion = c(0.595,0.844,0.405,0.156)
+  proportion = c(0.595, 0.844, 0.405, 0.156)
 )
 
 diffPopPlot <- ggplot(
@@ -145,8 +165,8 @@ diffPopPlot <- ggplot(
 ) +
   geom_bar(
     position = "fill",
-    stat="identity",
-    width=0.3
+    stat = "identity",
+    width = 0.3
   ) +
   scale_fill_manual(
     values = c(
@@ -158,13 +178,14 @@ diffPopPlot <- ggplot(
     title = paste0("Population Stacked Bar Graph"),
     y = "Enrollment proportion",
     x = "Location",
-    fill = "Residency") +
+    fill = "Residency"
+  ) +
   theme_bw() +
   theme(
-  plot.caption = element_text(size = 18),
-  text = element_text(size = 18),
-  legend.position = "bottom"
-)
+    plot.caption = element_text(size = 18),
+    text = element_text(size = 18),
+    legend.position = "bottom"
+  )
 
 # Define the UI ----
 ui <- list(
@@ -173,16 +194,21 @@ ui <- list(
     # Header ----
     dashboardHeader(
       title = "Conf. Int. for Proportions",
-      titleWidth=250,
+      titleWidth = 250,
       tags$li(
         class = "dropdown",
-        tags$a(target = "_blank", icon("comments"),
-               href = "https://pennstate.qualtrics.com/jfe/form/SV_7TLIkFtJEJ7fEPz?appName=Inference_for_Proportions"
+        tags$a(
+          target = "_blank", icon("comments"),
+          href = "https://pennstate.qualtrics.com/jfe/form/SV_7TLIkFtJEJ7fEPz?appName=Inference_for_Proportions"
         )
       ),
-      tags$li(class = "dropdown",
-              tags$a(href='https://shinyapps.science.psu.edu/',
-                     icon("home")))
+      tags$li(
+        class = "dropdown",
+        tags$a(
+          href = "https://shinyapps.science.psu.edu/",
+          icon("home")
+        )
+      )
     ),
     # Sidebar ----
     dashboardSidebar(
@@ -193,13 +219,14 @@ ui <- list(
         menuItem("UP Residency Percentage", tabName = "UPRes", icon = icon("wpexplorer")),
         menuItem("Difference of Proportions", tabName = "popdiff", icon = icon("wpexplorer")),
         menuItem("Finding the \\(Z^*\\) Multiplier", tabName = "findz", icon = icon("wpexplorer")),
-        menuItem("References", tabName = "Ref",icon = icon("leanpub"))
+        menuItem("References", tabName = "Ref", icon = icon("leanpub"))
       ),
       # PSU Logo
       tags$div(
         class = "sidebar-logo",
         boastUtils::psu_eberly_logo("reversed")
-      )),
+      )
+    ),
     # Body ----
     dashboardBody(
       tabItems(
@@ -226,10 +253,12 @@ ui <- list(
               tags$li("Click on the generate buttons to draw new samples and for
                       the confidence interval app, click on the center of an
                       interval to show data for that sample."),
-              tags$li(strong("Difference of Proportions page: "),
-                      "You can change the sample size and/or the confidence level
+              tags$li(
+                strong("Difference of Proportions page: "),
+                "You can change the sample size and/or the confidence level
                       and explore the behavior of a Z-test for differences in
-                      proportions for out-of-state and Pennsylvania students.")
+                      proportions for out-of-state and Pennsylvania students."
+              )
             ),
             br(),
             tags$li(strong("Finding the \\(Z^*\\) Multipler page")),
@@ -257,7 +286,8 @@ ui <- list(
             br(),
             br(),
             br(),
-            div(class = "updated", "Last Update: 11/03/2020 by NJH."))
+            div(class = "updated", "Last Update: 11/03/2020 by NJH.")
+          )
         ),
         ## UP Residency-Single Proportion ----
         tabItem(
@@ -268,7 +298,7 @@ ui <- list(
             status = "primary",
             collapsible = TRUE,
             collapsed = FALSE,
-            width = '100%',
+            width = "100%",
             p(
               "A researcher plans to take a random sample of size ", em("n"),
               " students to do a survey about their experiences in studying at
@@ -370,7 +400,7 @@ ui <- list(
             status = "primary",
             collapsible = TRUE,
             collapsed = FALSE,
-            width = '100%',
+            width = "100%",
             p("A researcher wants to sample a group of ", em("n"), " University
               Park students and ", em("n"), " students from other Penn State
               campuses to ask them about their experiences in college. Although
@@ -379,8 +409,7 @@ ui <- list(
               change that difference. The researcher uses her samples to create
               a confidence interval for the difference between the University
               Park campus and the Commonwealth campuses for the proportion who
-              are Pennsylvania residents."
-            ),
+              are Pennsylvania residents."),
             p(
               "Hypothesis: There is no statistically significant difference in
               the proportion of Pennsylvania student enrollment between Univeristy
@@ -449,8 +478,8 @@ ui <- list(
                             sample proportions of penn residency in University
                             Park and Other Campuses. The horizontal lines on
                             each bar indicate the population proportions for the two groups."),
-                  trigger="hover",
-                  placement="top"
+                  trigger = "hover",
+                  placement = "top"
                 ),
                 tableOutput("CItable"),
                 checkboxInput(
@@ -587,46 +616,60 @@ ui <- list(
           tabName = "Ref",
           withMathJax(),
           h2("References"),
-          p(class = "hangingindent",
+          p(
+            class = "hangingindent",
             "Bailey, E. (2015), shinyBS: Twitter bootstrap components for shiny, R package.
-           Available from https://CRAN.R-project.org/package=shinyBS"),
-          p(class = "hangingindent",
+           Available from https://CRAN.R-project.org/package=shinyBS"
+          ),
+          p(
+            class = "hangingindent",
             "Bates D. and Maechler M. (2019), Matrix: Sparse and Dense Matrix Classes and Maethods, R package.
-           Available from https://cran.r-project.org/web/packages/Matrix/index.html"),
-          p(class = "hangingindent",
+           Available from https://cran.r-project.org/web/packages/Matrix/index.html"
+          ),
+          p(
+            class = "hangingindent",
             "Budget Office in PSU. (2019), Enrollment by Residency Fall 2019. Available at
-           https://factbook.psu.edu/factbook/StudentDynamic/PANonPASummary.aspx?YearCode=2019Enr&FBPlusIndc=N"),
+           https://factbook.psu.edu/factbook/StudentDynamic/PANonPASummary.aspx?YearCode=2019Enr&FBPlusIndc=N"
+          ),
           p(
             class = "hangingindent",
             "Carey, R. and Hatfield, N. J. (20202), boastUtils: BOAST Utilities,
             R Package.
             Available from https://github.com/EducationShinyAppTeam/boastUtils"
           ),
-          p(class = "hangingindent",
+          p(
+            class = "hangingindent",
             "Chang, W. and Borges Ribeio, B. (2018), shinydashboard:
            Create dashboards with 'Shiny', R Package. Available from
-           https://CRAN.R-project.org/package=shinydashboard"),
-          p(class = "hangingindent",
+           https://CRAN.R-project.org/package=shinydashboard"
+          ),
+          p(
+            class = "hangingindent",
             "Chang, W., Cheng, J., Allaire, J., Xie, Y., and McPherson, J. (2019),
            shiny: Web application framework for R, R Package.
-           Available from https://CRAN.R-project.org/package=shiny"),
-          p(class = "hangingindent",
+           Available from https://CRAN.R-project.org/package=shiny"
+          ),
+          p(
+            class = "hangingindent",
             "Wickham, H., Francois R., Henry L., and Muller K. (2020), dplyr:
            A Grammar of Data Manipulation, R Package. Available from
-           https://cran.r-project.org/web/packages/dplyr/index.html"),
-          p(class = "hangingindent",
+           https://cran.r-project.org/web/packages/dplyr/index.html"
+          ),
+          p(
+            class = "hangingindent",
             "Wickham, H. (2016), ggplot2: Elegant graphics for data analysis,
-           R Package, New York: Springer-Verlag. Available from https://ggplot2.tidyverse.org")
+           R Package, New York: Springer-Verlag. Available from https://ggplot2.tidyverse.org"
+          )
         )
-      )#end of tabItem
-    )#end of dashboardBody
+      ) # end of tabItem
+    ) # end of dashboardBody
   )
 )
 
 
 # Define the server ----
 server <- function(input, output, session) {
-  #Explore Button ----
+  # Explore Button ----
   observeEvent(input$explore, {
     updateTabItems(
       session = session,
@@ -656,7 +699,7 @@ server <- function(input, output, session) {
 
   # Calculating alpha by the confidence level input ----
   alpha <- eventReactive(input$new, {
-    (1 - input$level/100)
+    (1 - input$level / 100)
   })
 
   # Updating Sample Size ----
@@ -670,8 +713,11 @@ server <- function(input, output, session) {
     data.frame(
       x = do.call(
         paste0("rbinom"),
-        c(list(n = as.integer(input$nsamp) * 50),
-          list(1,0.595)))
+        c(
+          list(n = as.integer(input$nsamp) * 50),
+          list(1, 0.595)
+        )
+      )
     ) %>%
       mutate(idx = rep(1:50, each = input$nsamp))
   })
@@ -683,10 +729,11 @@ server <- function(input, output, session) {
       summarise(
         .groups = "keep",
         Count = sum(x),
-        sampleProp = binconf(Count, N(), alpha=alpha())[1],
-        lowerbound = binconf(Count, N(), alpha=alpha())[2],
-        upperbound = binconf(Count, N(), alpha=alpha())[3],
-        cover = (lowerbound < 0.595) & (0.595 < upperbound)) %>%
+        sampleProp = binconf(Count, N(), alpha = alpha())[1],
+        lowerbound = binconf(Count, N(), alpha = alpha())[2],
+        upperbound = binconf(Count, N(), alpha = alpha())[3],
+        cover = (lowerbound < 0.595) & (0.595 < upperbound)
+      ) %>%
       ungroup()
   })
 
@@ -694,7 +741,7 @@ server <- function(input, output, session) {
   # Default as all the samples are selected ----
   selected_sample <- 50
   selectedSample <- reactive({
-    if (! is.null(input$plot_click)) {
+    if (!is.null(input$plot_click)) {
       selected_sample <<- round(input$plot_click$y)
       if (selected_sample < 1) selected_sample <<- 1
       if (selected_sample > 50) selected_sample <<- 50
@@ -704,20 +751,21 @@ server <- function(input, output, session) {
 
   OneSample <- reactive({
     Data() %>%
-      filter( idx == selectedSample() )
+      filter(idx == selectedSample())
   })
 
   OneSampleColor <- reactive({
     colors <- c("TRUE" = psuPalette[1], "FALSE" = psuPalette[2])
-    covers <- (Intervals() %>% filter(idx == selectedSample()) )$cover
-    colors[ as.character(covers) ]
+    covers <- (Intervals() %>% filter(idx == selectedSample()))$cover
+    colors[as.character(covers)]
   })
 
   # Print the CIplot for Single Proportion ---
   output$CIplot <- renderPlot({
     validate(
       need(is.numeric(input$nsamp),
-           message = "Please input sample size")
+        message = "Please input sample size"
+      )
     )
 
     ggplot(data = Intervals()) +
@@ -762,7 +810,7 @@ server <- function(input, output, session) {
       labs(
         title = paste0(input$level, "% Confidence Intervals for the Proportion"),
         x = NULL,
-        y ="PA residency proportion"
+        y = "PA residency proportion"
       ) +
       theme_bw() +
       theme(
@@ -771,26 +819,28 @@ server <- function(input, output, session) {
         axis.ticks.y = element_blank(),
         plot.caption = element_text(size = 18),
         text = element_text(size = 18),
-        axis.title = element_text(size = 16))
+        axis.title = element_text(size = 16)
+      )
   })
 
   # Sample Plot for One Proportion ----
-  output$sampProp  <- renderPlot({
+  output$sampProp <- renderPlot({
     validate(
       need(is.numeric(input$nsamp),
-           message = "Please input sample size")
+        message = "Please input sample size"
+      )
     )
     sampData <- data.frame(
       residency = c("PA Students", "Non-PA Students"),
-      proportions = round(c(mean(OneSample()$x), 1-mean(OneSample()$x)), digits = 3)
+      proportions = round(c(mean(OneSample()$x), 1 - mean(OneSample()$x)), digits = 3)
     )
     ggplot(
       data = sampData,
       mapping = aes(x = residency, y = proportions)
     ) +
       geom_bar(
-        width =0.3,
-        stat = 'identity',
+        width = 0.3,
+        stat = "identity",
         fill = OneSampleColor()
       ) +
       scale_y_continuous(
@@ -807,8 +857,10 @@ server <- function(input, output, session) {
         values = c("popValue" = boastPalette[3])
       ) +
       labs(
-        title = paste0("Sample proportion for UP = ",
-                       round(mean(OneSample()$x), 2)),
+        title = paste0(
+          "Sample proportion for UP = ",
+          round(mean(OneSample()$x), 2)
+        ),
         x = "Residency status",
         y = "Proportion"
       ) +
@@ -825,7 +877,8 @@ server <- function(input, output, session) {
   output$CoverageRate <- renderText({
     validate(
       need(is.numeric(input$nsamp),
-           message = "Please input sample size")
+        message = "Please input sample size"
+      )
     )
 
     paste0(
@@ -868,7 +921,7 @@ server <- function(input, output, session) {
       function(x) {
         y <- fun(x)
         y[x <= qnorm(alpha, lower.tail = TRUE) |
-            x >= qnorm(alpha, lower.tail = FALSE)] <- NA
+          x >= qnorm(alpha, lower.tail = FALSE)] <- NA
         return(y)
       }
     }
@@ -939,10 +992,10 @@ server <- function(input, output, session) {
     )
     if (
       (input$question1 == 1.645 | input$question1 == 1.65 |
-       input$question1 == 1.64)
+        input$question1 == 1.64)
       & (input$question2 == 1.960)
       & (input$question3 == 2.576 | input$question3 == 2.58 |
-         input$question3 == 2.6)
+          input$question3 == 2.6)
       & (input$question4 == "y")) {
       cat("All correct. Great Job!")
     }
@@ -1066,52 +1119,53 @@ server <- function(input, output, session) {
 
   ## Difference of Two Proportions? ----
 
-  #Calculating alpha by the confidence level input
+  # Calculating alpha by the confidence level input
   dalpha <- reactive({
     (1 - input$dlevel / 100) / 2
   })
 
-  #Updating Sample Size
+  # Updating Sample Size
   dN <- reactive({
     as.integer(input$nSamp)
   })
 
 
   standardError <- reactive({
-    sqrt(0.595*0.405/dN() + 0.844*0.156/dN())
+    sqrt(0.595 * 0.405 / dN() + 0.844 * 0.156 / dN())
   })
 
-  #population mean plot with true diffmean
-  output$dpopMean  = renderPlot({
+  # population mean plot with true diffmean
+  output$dpopMean <- renderPlot({
     diffPopPlot
   })
 
   UPS <- reactive({
     input$newSample
-    rbinom(n=dN(), 1, 0.595)
+    rbinom(n = dN(), 1, 0.595)
   })
 
   UWS <- reactive({
     input$newSample
-    rbinom(n=dN(), 1, 0.844)
+    rbinom(n = dN(), 1, 0.844)
   })
 
   Diff <- reactive({
     mean(UPS()) - mean(UWS())
   })
 
-  output$sampleDiff  = renderPlot({
+  output$sampleDiff <- renderPlot({
     validate(
       need(is.numeric(input$nSamp),
-           message = "Please input samle size")
+        message = "Please input samle size"
+      )
     )
     input$newSample
 
     dfSample <- data.frame(
       residency = rep(c("Pennsylvania Students", "Out-of-State Students"), each = 2),
       location = rep(c("University Park", "Other Campuses"), times = 2),
-      proportion = c(mean(UPS()),mean(UWS()),1-mean(UPS()),1-mean(UWS())),
-      ref = c(0.595,0.844), # What is the purpose of this line?
+      proportion = c(mean(UPS()), mean(UWS()), 1 - mean(UPS()), 1 - mean(UWS())),
+      ref = c(0.595, 0.844), # What is the purpose of this line?
       2 # What is the purpose of this line?
     )
 
@@ -1128,7 +1182,8 @@ server <- function(input, output, session) {
         values = c(
           "Pennsylvania Students" = psuPalette[2],
           "Out-of-State Students" = psuPalette[3]
-        )) +
+        )
+      ) +
       geom_errorbar(
         mapping = aes(ymin = ref, ymax = ref, col = "trueProp"),
         width = 0.3,
@@ -1143,19 +1198,22 @@ server <- function(input, output, session) {
         title = "Sample Stacked Bar Graph",
         y = "Enrollment proportion",
         x = "Location",
-        fill = "Residency") +
+        fill = "Residency"
+      ) +
       theme_bw() +
       theme(
-      plot.caption = element_text(size = 18),
-      text = element_text(size = 18),
-      legend.position = "bottom"
-    )
+        plot.caption = element_text(size = 18),
+        text = element_text(size = 18),
+        legend.position = "bottom"
+      )
   })
 
-  output$pop<- renderText({
-    paste("Population proportion(diff) = -0.249, Population standard deviation
+  output$pop <- renderText({
+    paste(
+      "Population proportion(diff) = -0.249, Population standard deviation
           for the difference in proportions = ",
-          round(sqrt(0.595*0.405 + 0.844*0.156),3))
+      round(sqrt(0.595 * 0.405 + 0.844 * 0.156), 3)
+    )
   })
 
 
@@ -1166,66 +1224,68 @@ server <- function(input, output, session) {
     Diff() - qnorm(dalpha()) * standardError()
   })
 
-  output$CItable = renderTable({
+  output$CItable <- renderTable({
     validate(
       need(is.numeric(input$nSamp),
-           message = "Please input sample size")
+        message = "Please input sample size"
+      )
     )
-    if(input$CIcheckbox)
-    {
-      ctable = matrix(c(dlowerbound(), dupperbound()),nrow=1)
-      colnames(ctable) = c("Lower bound","Upper bound")
+    if (input$CIcheckbox) {
+      ctable <- matrix(c(dlowerbound(), dupperbound()), nrow = 1)
+      colnames(ctable) <- c("Lower bound", "Upper bound")
       ctable
     }
   })
 
   pvalue <- reactive({
-    2*(1-pnorm(abs(zstatistic())))
+    2 * (1 - pnorm(abs(zstatistic())))
   })
 
   zstatistic <- reactive({
-    Diff()/standardError()
-
+    Diff() / standardError()
   })
 
-  output$popInfo = renderTable({
-
-    ctable = matrix(c(percent(0.595), percent(0.844)), nrow=1)
-    colnames(ctable) = c("University Park","Other Campuses")
+  output$popInfo <- renderTable({
+    ctable <- matrix(c(percent(0.595), percent(0.844)), nrow = 1)
+    colnames(ctable) <- c("University Park", "Other Campuses")
     ctable
   })
 
-  output$sampleinfotable = renderTable({
+  output$sampleinfotable <- renderTable({
     validate(
       need(is.numeric(input$nSamp),
-           message = "Please input sample size")
+        message = "Please input sample size"
+      )
     )
-    ctable = matrix(c(percent(mean(UPS())), percent(mean(UWS()))), nrow=1)
-    colnames(ctable) = c("University Park","Other Campuses")
+    ctable <- matrix(c(percent(mean(UPS())), percent(mean(UWS()))), nrow = 1)
+    colnames(ctable) <- c("University Park", "Other Campuses")
     ctable
   })
 
-  output$Diffinfo = renderUI({
+  output$Diffinfo <- renderUI({
     validate(
       need(is.numeric(input$nSamp),
-           message = "")
+        message = ""
+      )
     )
-    paste("The difference between UP and other campuses sample (UP-other) is ",
-          Diff(),
-          ", Sample standard deviation for the difference in proportions = ",
-          round(standardError(),3),", UP sample = ",dN(),", others sample = ",
-          dN())
+    paste(
+      "The difference between UP and other campuses sample (UP-other) is ",
+      Diff(),
+      ", Sample standard deviation for the difference in proportions = ",
+      round(standardError(), 3), ", UP sample = ", dN(), ", others sample = ",
+      dN()
+    )
   })
 
-  output$table = renderTable({
+  output$table <- renderTable({
     validate(
       need(is.numeric(input$nSamp),
-           message = "Please input sample size")
+        message = "Please input sample size"
+      )
     )
-    if(input$testcheckbox)
-    {
-      ctable = matrix(c(zstatistic(),pvalue()),nrow=1)
-      colnames(ctable) = c("z-statistic","p-value")
+    if (input$testcheckbox) {
+      ctable <- matrix(c(zstatistic(), pvalue()), nrow = 1)
+      colnames(ctable) <- c("z-statistic", "p-value")
       ctable
     }
   })
@@ -1235,55 +1295,61 @@ server <- function(input, output, session) {
   })
 
   ## Where is the decision stuff? Do we still need it?
-  output$decisionZ = renderText({
+  output$decisionZ <- renderText({
     validate(
       need(is.numeric(input$nSamp),
-           message = "Please input sample size")
+        message = "Please input sample size"
+      )
     )
-    if(input$decisioncheckbox)
-    {
-      if(abs(zstatistic()) <= zstandard()){
-        paste("Since it is observed that |z| = ",abs(round(zstatistic(),3)),
-              " is less than \\(Z^*\\) score = ",round(zstandard(),3),
-              ", the null hypothesis provides a reasonable explanation of the
+    if (input$decisioncheckbox) {
+      if (abs(zstatistic()) <= zstandard()) {
+        paste(
+          "Since it is observed that |z| = ", abs(round(zstatistic(), 3)),
+          " is less than \\(Z^*\\) score = ", round(zstandard(), 3),
+          ", the null hypothesis provides a reasonable explanation of the
               data so we can NOT conclude that University Park campus has a different
               proportion of Pennsylvania residents  when student's are chosen by
-              the researcher's sampling procedure.")
-
-      }else{
-        paste("Since it is observed that |z| = ",abs(round(zstatistic(),3)),
-              " is larger than \\(Z^*\\) score = ",round(zstandard(),3),
-              ", the null hypothesis is not a reasonable explanation of the data
+              the researcher's sampling procedure."
+        )
+      } else {
+        paste(
+          "Since it is observed that |z| = ", abs(round(zstatistic(), 3)),
+          " is larger than \\(Z^*\\) score = ", round(zstandard(), 3),
+          ", the null hypothesis is not a reasonable explanation of the data
               so we have evidence that there is a difference between the proportion
               of Pennsylvania residents at the University Park campus and the
               proportion at other campuses when students are chosen by the researcher's
-              sampling procedure.")
+              sampling procedure."
+        )
       }
     }
-
   })
 
   ## Where is the decision check box?
   output$decisionP <- renderText({
     validate(
       need(is.numeric(input$nSamp),
-           message = "Please input sample size")
+        message = "Please input sample size"
+      )
     )
-    if(input$decisioncheckbox)
-    {
-      if(pvalue() >= (2*dalpha())){
-        paste("Since it is observed that p-value = ",round(pvalue(),3)," is larger than ",
-              round(2*dalpha(),3),", the null hypothesis provides a reasonable explanation
+    if (input$decisioncheckbox) {
+      if (pvalue() >= (2 * dalpha())) {
+        paste(
+          "Since it is observed that p-value = ", round(pvalue(), 3), " is larger than ",
+          round(2 * dalpha(), 3), ", the null hypothesis provides a reasonable explanation
               of the data so we can NOT conclude that University Park campus has
               a different proportion of Pennsylvania residents  when student's
-              are chosen by the researcher's sampling procedure.")
-      }else{
-        paste("Since it is observed that p-value = ",round(pvalue(),3)," is less than ",
-              round(2*dalpha(),3),", the null hypothesis is not a reasonable
+              are chosen by the researcher's sampling procedure."
+        )
+      } else {
+        paste(
+          "Since it is observed that p-value = ", round(pvalue(), 3), " is less than ",
+          round(2 * dalpha(), 3), ", the null hypothesis is not a reasonable
               explanation of the data so we have evidence that there is a difference
               between the proportion of Pennsylvania residents at the University
               Park campus and the proportion at other campuses when students are
-              chosen by the researcher's sampling procedure.")
+              chosen by the researcher's sampling procedure."
+        )
       }
     }
   })
