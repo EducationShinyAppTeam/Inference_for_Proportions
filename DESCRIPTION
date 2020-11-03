@@ -1,0 +1,20 @@
+Title: Confidence Interval for One or Two Proportions
+ShortName: Inference for Proportions
+Date: 2020-11-03
+Authors@R: c(
+    person("Yingjie", "Wang", role = c("aut", "cre")),
+    person("Zhuolin", "Luo", role = c("ctb")),
+    person("Robert", "Carey", email = "rpc5102@psu.edu", role = c("ctb")),
+    person("Neil", "Hatfield", email = "njh5464@psu.edu", role = c("ctb"))
+  )
+Chapter: Statistical Inference
+Description: This app shows how the confidence level and sample size affect the
+    outcome confidence interval for a single proportion under the null hypothesis
+    of no bias. The app also explores the same issues for a confidence interval
+    for the difference between two population proportions.
+DisplayMode: Normal
+URL: https://psu-eberly.shinyapps.io/Inference_for_Proportions/
+BugReports: https://github.com/EducationShinyAppTeam/Inference_for_Proportions
+License: CC BY-NC-SA 4.0
+Tags: simulation
+Type: Shiny
