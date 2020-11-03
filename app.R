@@ -599,7 +599,10 @@ ui <- list(
               br(),
               uiOutput("pic4")
             )
-          )
+          ),
+          p(tags$em("Note: "), "Partial credit is given if you enter the negative
+            version of the multiplier. Typically, we use the positive version
+            even though they both result in the same interval.")
         ),
         # References ----
         tabItem(
@@ -904,7 +907,7 @@ server <- function(input, output, session) {
   })
 
   zlowerbound <- reactive({
-    round(qnorm(zalpha()), digits = 3)
+    round(qnorm(zalpha(), lower.tail = TRUE), digits = 3)
   })
 
   zupperbound <- reactive({
@@ -976,7 +979,8 @@ server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = 0, add = c(0, 0.01)))
   })
 
-  output$feedback <- renderPrint({
+  ## Feedback Scoring ----
+  output$feedback <- renderUI({
     validate(
       need(
         !is.na(input$question1) & !is.na(input$question2) &
@@ -985,19 +989,10 @@ server <- function(input, output, session) {
       ),
       errorClass = "leftParagraphError"
     )
-    if (
-      (input$question1 == 1.645 | input$question1 == 1.65 |
-        input$question1 == 1.64)
-      & (input$question2 == 1.960)
-      & (input$question3 == 2.576 | input$question3 == 2.58 |
-          input$question3 == 2.6)
-      & (input$question4 == "y")) {
-      cat("All correct. Great Job!")
-    }
 
     ## Render pic1
     if (input$question1 != "") {
-      success <- abs(input$question1) - 1.645 <= 0.005
+      success <- abs(abs(input$question1) - 1.645) <= 0.005
       output$pic1 <- boastUtils::renderIcon(
         icon = ifelse(
           success,
@@ -1027,7 +1022,7 @@ server <- function(input, output, session) {
 
     ## Render pic2
     if (input$question2 != "") {
-      success <- abs(input$question2) - 1.960 <= 0.005
+      success <- abs(abs(input$question2) - 1.960) <= 0.005
       output$pic2 <- boastUtils::renderIcon(
         icon = ifelse(
           success,
@@ -1038,7 +1033,7 @@ server <- function(input, output, session) {
           ),
           "incorrect"
         ),
-        width = 36 # Note this is larger than what you currently have
+        width = 36
       )
 
       ### Store xAPI statement ----
@@ -1057,7 +1052,7 @@ server <- function(input, output, session) {
 
     ## Render pic3
     if (input$question3 != "") {
-      success <- abs(input$question3) - 2.576 <= 0.005
+      success <- abs(abs(input$question3) - 2.576) <= 0.005
       output$pic3 <- boastUtils::renderIcon(
         icon = ifelse(
           success,
