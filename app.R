@@ -976,7 +976,7 @@ server <- function(input, output, session) {
       scale_y_continuous(expand = expansion(mult = 0, add = c(0, 0.01)))
   })
 
-  output$feedback <- renderPrint({
+  output$feedback <- renderUI({
     validate(
       need(
         !is.na(input$question1) & !is.na(input$question2) &
@@ -1107,15 +1107,8 @@ server <- function(input, output, session) {
       )
     }
     
-    if (
-      (input$question1 == 1.645 | input$question1 == 1.65 |
-       input$question1 == 1.64)
-      & (input$question2 == 1.960)
-      & (input$question3 == 2.576 | input$question3 == 2.58 |
-         input$question3 == 2.6)
-      & (input$question4 == "y")) {
-      cat("All correct. Great Job!")
-    }
+    # renderUI expects something to be returned
+    return()
   })
 
   ## Difference of Two Proportions? ----
@@ -1215,7 +1208,6 @@ server <- function(input, output, session) {
       round(sqrt(0.595 * 0.405 + 0.844 * 0.156), 3)
     )
   })
-
 
   dlowerbound <- reactive({
     Diff() + qnorm(dalpha()) * standardError()
