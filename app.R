@@ -988,8 +988,8 @@ server <- function(input, output, session) {
 
     ## Render pic1
     if (input$question1 != "") {
-      success <- abs(input$question1) - 1.645 <= 0.005
-      
+      success <- abs(abs(input$question1) - 1.645) <= 0.005
+
       ### Store xAPI statement ----
       stmt <- boastUtils::generateStatement(
         session,
@@ -1000,9 +1000,9 @@ server <- function(input, output, session) {
         response = input$question1,
         success = success
       )
-      
+
       boastUtils::storeStatement(session, stmt)
-      
+
       output$pic1 <- boastUtils::renderIcon(
         icon = ifelse(
           success,
@@ -1019,8 +1019,8 @@ server <- function(input, output, session) {
 
     ## Render pic2
     if (input$question2 != "") {
-      success <- abs(input$question2) - 1.960 <= 0.005
-      
+      success <- abs(abs(input$question2) - 1.960) <= 0.005
+
       ### Store xAPI statement ----
       stmt <- boastUtils::generateStatement(
         session,
@@ -1031,9 +1031,9 @@ server <- function(input, output, session) {
         response = input$question2,
         success = success
       )
-      
+
       boastUtils::storeStatement(session, stmt)
-      
+
       output$pic2 <- boastUtils::renderIcon(
         icon = ifelse(
           success,
@@ -1050,8 +1050,8 @@ server <- function(input, output, session) {
 
     ## Render pic3
     if (input$question3 != "") {
-      success <- abs(input$question3) - 2.576 <= 0.005
-      
+      success <- abs(abs(input$question3) - 2.576) <= 0.005
+
       ### Store xAPI statement ----
       stmt <- boastUtils::generateStatement(
         session,
@@ -1062,9 +1062,9 @@ server <- function(input, output, session) {
         response = input$question3,
         success = success
       )
-      
+
       boastUtils::storeStatement(session, stmt)
-      
+
       output$pic3 <- boastUtils::renderIcon(
         icon = ifelse(
           success,
@@ -1082,7 +1082,7 @@ server <- function(input, output, session) {
     ## Render pic4
     if (input$question4 != "select") {
       success <- input$question4 == "y"
-      
+
       ### Store xAPI statement ----
       stmt <- boastUtils::generateStatement(
         session,
@@ -1094,9 +1094,9 @@ server <- function(input, output, session) {
         response = input$question4,
         success = success
       )
-      
+
       boastUtils::storeStatement(session, stmt)
-      
+
       output$pic4 <- boastUtils::renderIcon(
         icon = ifelse(
           success,
@@ -1106,7 +1106,7 @@ server <- function(input, output, session) {
         width = 36
       )
     }
-    
+
     # renderUI expects something to be returned
     return()
   })
