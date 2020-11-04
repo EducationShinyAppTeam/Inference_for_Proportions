@@ -599,7 +599,10 @@ ui <- list(
               br(),
               uiOutput("pic4")
             )
-          )
+          ),
+          p(tags$em("Note: "), "Partial credit is given if you enter the negative
+            version of the multiplier. Typically, we use the positive version
+            even though they both result in the same interval.")
         ),
         # References ----
         tabItem(
