@@ -643,10 +643,9 @@ ui <- list(
            Available from https://CRAN.R-project.org/package=shiny"
           ),
           p(class = "hangingindent",
-            "Harrell, F.E. (2020), Confidence Intervals for Binomial Probability.
-           We needed to bypass the loading of the foreign package for R 3.6.3,
-           thus we are using the definition of the binconf which is all we needed
-           from Hmisc. Available from https://CRAN.R-project.org/package=Hmisc"),
+            "Harrell, F. E. (2020), binconf: Confidence Intervals for Binomial
+            Probabilities in Hmisc: Harrell Miscellaneous. R Package, v 4.4-1.
+            Available from https://CRAN.R-project.org/package=Hmisc"),
           p(
             class = "hangingindent",
             "Wickham, H., Francois R., Henry L., and Muller K. (2020), dplyr:
