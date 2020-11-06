@@ -177,6 +177,11 @@ diffPopPlot <- ggplot(
     legend.position = "bottom"
   )
 
+# Adding a conversion of a proportion into a character percentage
+percent <- function(x) {
+  return(as.character(paste0(x*100, "%")))
+}
+
 # Define the UI ----
 ui <- list(
   dashboardPage(
