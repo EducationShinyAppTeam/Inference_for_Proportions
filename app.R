@@ -177,10 +177,10 @@ diffPopPlot <- ggplot(
     legend.position = "bottom"
   )
 
-# Adding a conversion of a proportion into a character percentage
-percent <- function(x) {
-  return(as.character(paste0(x*100, "%")))
-}
+# # Adding a conversion of a proportion into a character percentage
+# percent <- function(x) {
+#   return(as.character(paste0(x*100, "%")))
+# }
 
 # Define the UI ----
 ui <- list(
@@ -1245,7 +1245,10 @@ server <- function(input, output, session) {
   })
 
   output$popInfo <- renderTable({
-    ctable <- matrix(c(percent(0.595), percent(0.844)), nrow = 1)
+    ctable <- matrix(
+      c(as.character(paste0(0.595*100, "%")),
+        as.character(paste0(0.844*100, "%"))),
+      nrow = 1)
     colnames(ctable) <- c("University Park", "Other Campuses")
     ctable
   })
@@ -1256,7 +1259,11 @@ server <- function(input, output, session) {
         message = "Please input sample size"
       )
     )
-    ctable <- matrix(c(percent(mean(UPS())), percent(mean(UWS()))), nrow = 1)
+    ctable <- matrix(
+      c(
+        as.character(paste0(mean(UPS())*100, "%")),
+        as.character(paste0(mean(UWS())*100, "%"))
+      ), nrow = 1)
     colnames(ctable) <- c("University Park", "Other Campuses")
     ctable
   })
