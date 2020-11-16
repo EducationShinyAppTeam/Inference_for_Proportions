@@ -1150,7 +1150,7 @@ server <- function(input, output, session) {
   })
 
   Diff <- reactive({
-    mean(UPS()) - mean(UWS())
+    round(mean(UPS()) - mean(UWS()), digits = 4)
   })
 
   output$sampleDiff <- renderPlot({
@@ -1261,8 +1261,8 @@ server <- function(input, output, session) {
     )
     ctable <- matrix(
       c(
-        as.character(paste0(mean(UPS())*100, "%")),
-        as.character(paste0(mean(UWS())*100, "%"))
+        as.character(paste0(round(mean(UPS()), 4)*100, "%")),
+        as.character(paste0(round(mean(UWS()), 4)*100, "%"))
       ), nrow = 1)
     colnames(ctable) <- c("University Park", "Other Campuses")
     ctable
