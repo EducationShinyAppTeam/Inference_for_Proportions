@@ -419,9 +419,8 @@ ui <- list(
                   tableOutput("popInfo"),
                   textOutput("pop"),
                   br(),
+                  hr(),
                   h3("Sample Information"),
-                  uiOutput("Diffinfo"),
-                  tableOutput("sampleinfotable"),
                   br(),
                   sliderInput(
                     inputId = "dlevel",
@@ -443,10 +442,14 @@ ui <- list(
                   br(),
                   bsButton(
                     inputId = "newSample",
-                    label = "Generate New Samples",
+                    label = "Generate a Sample",
                     icon = icon("retweet"),
                     size = "large"
-                  )
+                  ),
+                  br(),
+                  br(),
+                  tableOutput("sampleinfotable"),
+                  uiOutput("Diffinfo")
                 )
               ),
               column(
@@ -1126,9 +1129,13 @@ server <- function(input, output, session) {
   })
 
   # Updating Sample Size
-  dN <- reactive({
-    as.integer(input$nSamp)
-  })
+  dN <- eventReactive(
+    eventExpr = input$newSample,
+    valueExpr = {
+      input$nSamp
+    },
+    ignoreInit = FALSE
+  )
 
   standardError <- reactive({
     sqrt(0.595 * 0.405 / dN() + 0.844 * 0.156 / dN())
@@ -1139,19 +1146,34 @@ server <- function(input, output, session) {
     diffPopPlot
   })
 
-  UPS <- reactive({
-    input$newSample
-    rbinom(n = dN(), 1, 0.595)
-  })
+  UPS <- eventReactive(
+    eventExpr = input$newSample,
+    valueExpr = {
+      rbinom(n = dN(), 1, 0.595)
+    }
+  )
 
-  UWS <- reactive({
-    input$newSample
-    rbinom(n = dN(), 1, 0.844)
-  })
+  UWS <- eventReactive(
+    eventExpr = input$newSample,
+    valueExpr = {
+      rbinom(n = dN(), 1, 0.844)
+    }
+  )
 
   Diff <- reactive({
     round(mean(UPS()) - mean(UWS()), digits = 4)
   })
+
+  observeEvent(
+    eventExpr = input$newSample,
+    handlerExpr = {
+      updateButton(
+        session = session,
+        inputId = "newSample",
+        label = "Generate a New Sample"
+      )
+    }
+  )
 
   output$sampleDiff <- renderPlot({
     validate(
@@ -1275,10 +1297,11 @@ server <- function(input, output, session) {
       )
     )
     paste(
-      "The difference between UP and other campuses sample (UP-other) is ",
+      "The difference between UP and other campuses sample is ",
       Diff(),
       ", Sample standard deviation for the difference in proportions = ",
-      round(standardError(), 3), ", UP sample = ", dN(), ", others sample = ",
+      round(standardError(), 3), ", UP sample size is ", dN(), "; Other campuses'
+      sample size is ",
       dN()
     )
   })
