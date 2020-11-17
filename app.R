@@ -415,7 +415,7 @@ ui <- list(
                 width = 4,
                 wellPanel(
                   h3("Population Information"),
-                  p("Subtraction order: Other − UP"),
+                  p("Subtraction order: UP − Other"),
                   tableOutput("popInfo"),
                   textOutput("pop"),
                   br(),
@@ -476,12 +476,12 @@ ui <- list(
                   trigger = "hover",
                   placement = "top"
                 ),
-                tableOutput("CItable"),
                 checkboxInput(
                   inputId = "CIcheckbox",
                   label = "Show Confidence Interval",
                   value = FALSE
-                )
+                ),
+                tableOutput("CItable")
               )
             )
           )
