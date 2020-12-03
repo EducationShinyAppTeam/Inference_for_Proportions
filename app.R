@@ -664,7 +664,11 @@ ui <- list(
             class = "hangingindent",
             "Wickham, H. (2016), ggplot2: Elegant graphics for data analysis,
            R Package, New York: Springer-Verlag. Available from https://ggplot2.tidyverse.org"
-          )
+          ),
+          br(),
+          br(),
+          br(),
+          boastUtils::copyrightInfo()
         )
       ) # end of tabItem
     ) # end of dashboardBody
