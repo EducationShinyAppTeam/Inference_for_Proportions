@@ -167,7 +167,7 @@ ui <- list(
             br(),
             br(),
             br(),
-            div(class = "updated", "Last Update: 07/22/2020 by ZL."))
+            div(class = "updated", "Last Update: 11/10/2020 by ZL."))
         ),
         
         tabItem(
