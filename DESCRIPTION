@@ -5,7 +5,9 @@ Authors@R: c(
     person("Yingjie", "Wang", role = c("aut", "cre")),
     person("Zhuolin", "Luo", role = c("ctb")),
     person("Robert", "Carey", email = "rpc5102@psu.edu", role = c("ctb")),
-    person("Neil", "Hatfield", email = "njh5464@psu.edu", role = c("ctb"))
+    person("Neil", "Hatfield", email = "njh5464@psu.edu", role = c("ctb","aut")),
+    person("Dennis", "Pearl", role = c("aut", "ctb")),
+    person("Robert", "Chappell", role = c("ctb"))
   )
 Chapter: Statistical Inference
 Description: This app shows how the confidence level and sample size affect the
