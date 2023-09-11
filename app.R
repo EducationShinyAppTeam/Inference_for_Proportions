@@ -104,12 +104,11 @@ binconf <- function(x, n, alpha = 0.05,
   }
   mat
 }
-# End of Harrell's code----------------------------------------------------------
 
 ## Single Proportion Population Plot ----
 upResData <- data.frame(
   status = c("PA Students", "Non-PA Students"),
-  proportion = c(0.595, 1 - 0.595)
+  proportion = c(0.58, 1 - 0.58)
 )
 
 upResidency <- ggplot(
@@ -122,9 +121,9 @@ upResidency <- ggplot(
     fill = psuPalette[6]
   ) +
   geom_hline(
-    yintercept = 0.595,
+    yintercept = 0.58,
     color = boastPalette[3],
-    size = 1.2
+    linewidth = 1.2
   ) +
   labs(
     title = "Residency Breakdown for University Park",
@@ -146,7 +145,7 @@ upResidency <- ggplot(
 dfPop <- data.frame(
   residency = rep(c("Pennsylvania Students", "Out-of-State Students"), each = 2),
   location = rep(c("University Park", "Other Campuses"), times = 2),
-  proportion = c(0.595, 0.844, 0.405, 0.156)
+  proportion = c(0.58, 0.82, 0.42, 0.18)
 )
 
 diffPopPlot <- ggplot(
@@ -276,12 +275,12 @@ ui <- list(
           br(),
           h2("Acknowledgements"),
           p(
-            "This app was developed and programmed by  Yingjie (Chelsea) Wang and
-            updated by Zhuolin Luo in 2020.",
+            "This app was developed and programmed by  Yingjie (Chelsea) Wang,
+            updated by Zhuolin Luo in 2020, and updated by Rob Chappell in 2023.",
             br(),
             br(),
             br(),
-            div(class = "updated", "Last Update: 11/03/2020 by NJH.")
+            div(class = "updated", "Last Update: 09/09/2023 by RC.")
           )
         ),
         ## UP Residency-Single Proportion ----
@@ -302,7 +301,7 @@ ui <- list(
               students who are Pennsylvania residents based on her study.",
               br(),
               br(),
-              "According to Penn State's records, 59.5% of Penn State students
+              "According to Penn State's records, 58% of Penn State students
               at University Park are residents of Pennsylvania."
             )
           ),
@@ -311,7 +310,7 @@ ui <- list(
               width = 4,
               wellPanel(
                 h3("Hypothesis"),
-                p("\\(H_0\\!:p = 0.595\\)", class = "largerFont"),
+                p("\\(H_0\\!:p = 0.58\\)", class = "largerFont"),
                 sliderInput(
                   inputId = "level",
                   label = "Confidence level",
@@ -352,7 +351,7 @@ ui <- list(
                 id = "singlePopPara",
                 "The population chart shows break down of all University Park
                 students; the green horizontal line shows the actual percentage
-                of them who are Pennsylvania residents (59.5%)."
+                of them who are Pennsylvania residents (58%)."
               )
             )
           ),
@@ -391,7 +390,7 @@ ui <- list(
           h2("Tests for Differences in Proportions of Pennsylvania Student
              Enrollment"),
           box(
-            title = "Context",
+            title = tags$strong("Context"),
             status = "primary",
             collapsible = TRUE,
             collapsed = FALSE,
@@ -399,7 +398,7 @@ ui <- list(
             p("A researcher wants to sample a group of ", em("n"), " University
               Park students and ", em("n"), " students from other Penn State
               campuses to ask them about their experiences in college. Although
-              the proportion of Pennsylvania residents is 0.249 lower at
+              the proportion of Pennsylvania residents is 0.24 lower at
               University Park, a critic believes her sampling technique might
               change that difference. The researcher uses her samples to create
               a confidence interval for the difference between the University
@@ -475,7 +474,8 @@ ui <- list(
                   content = paste("These stacked bar graphs show the generated
                             sample proportions of penn residency in University
                             Park and Other Campuses. The horizontal lines on
-                            each bar indicate the population proportions for the two groups."),
+                            each bar indicate the population proportions for the
+                            two groups."),
                   trigger = "hover",
                   placement = "top"
                 ),
@@ -724,7 +724,7 @@ server <- function(input, output, session) {
         paste0("rbinom"),
         c(
           list(n = as.integer(input$nsamp) * 50),
-          list(1, 0.595)
+          list(1, 0.58)
         )
       )
     ) %>%
@@ -741,7 +741,7 @@ server <- function(input, output, session) {
         sampleProp = binconf(Count, N(), alpha = alpha())[1],
         lowerbound = binconf(Count, N(), alpha = alpha())[2],
         upperbound = binconf(Count, N(), alpha = alpha())[3],
-        cover = (lowerbound < 0.595) & (0.595 < upperbound)
+        cover = (lowerbound < 0.58) & (0.58 < upperbound)
       ) %>%
       ungroup()
   })
@@ -790,14 +790,14 @@ server <- function(input, output, session) {
         )
       ) +
       geom_hline(
-        mapping = aes(yintercept = 0.595, color = "zpopValue"),
-        size = 1.25,
+        mapping = aes(yintercept = 0.58, color = "zpopValue"),
+        linewidth = 1.25,
         alpha = 1
       ) +
       coord_flip() +
       scale_size_manual(
         values = c("TRUE" = 1.5, "FALSE" = .7),
-        guide = FALSE
+        guide = 'none'
       ) +
       scale_color_manual(
         name = NULL,
@@ -814,7 +814,7 @@ server <- function(input, output, session) {
       ) +
       scale_alpha_manual(
         values = c("TRUE" = 1, "FALSE" = .5),
-        guide = FALSE
+        guide = 'none'
       ) +
       labs(
         title = paste0(input$level, "% Confidence Intervals for the Proportion"),
@@ -857,8 +857,8 @@ server <- function(input, output, session) {
         expand = expansion(mult = 0, add = c(0, 0.01))
       ) +
       geom_hline(
-        mapping = aes(yintercept = 0.595, color = "popValue"),
-        size = 1.2
+        mapping = aes(yintercept = 0.58, color = "popValue"),
+        linewidth = 1.2
       ) +
       scale_color_manual(
         name = NULL,
@@ -1142,7 +1142,7 @@ server <- function(input, output, session) {
   )
 
   standardError <- reactive({
-    sqrt(0.595 * 0.405 / dN() + 0.844 * 0.156 / dN())
+    sqrt(0.58 * 0.42 / dN() + 0.82 * 0.18 / dN())
   })
 
   # population mean plot with true diffmean
@@ -1153,14 +1153,14 @@ server <- function(input, output, session) {
   UPS <- eventReactive(
     eventExpr = input$newSample,
     valueExpr = {
-      rbinom(n = dN(), 1, 0.595)
+      rbinom(n = dN(), 1, 0.58)
     }
   )
 
   UWS <- eventReactive(
     eventExpr = input$newSample,
     valueExpr = {
-      rbinom(n = dN(), 1, 0.844)
+      rbinom(n = dN(), 1, 0.82)
     }
   )
 
@@ -1191,7 +1191,7 @@ server <- function(input, output, session) {
       residency = rep(c("Pennsylvania Students", "Out-of-State Students"), each = 2),
       location = rep(c("University Park", "Other Campuses"), times = 2),
       proportion = c(mean(UPS()), mean(UWS()), 1 - mean(UPS()), 1 - mean(UWS())),
-      ref = c(0.595, 0.844), # TODO: What is the purpose of this line?
+      ref = c(0.58, 0.82), # TODO: What is the purpose of this line?
       2 # TODO: What is the purpose of this line?
     )
 
@@ -1213,7 +1213,7 @@ server <- function(input, output, session) {
       geom_errorbar(
         mapping = aes(ymin = ref, ymax = ref, col = "trueProp"),
         width = 0.3,
-        size = 1
+        linewidth = 1
       ) +
       scale_color_manual(
         name = NULL,
@@ -1236,9 +1236,9 @@ server <- function(input, output, session) {
 
   output$pop <- renderText({
     paste(
-      "Population proportion(diff) = -0.249, Population standard deviation
+      "Population proportion (diff) = -0.24, Population standard deviation
           for the difference in proportions = ",
-      round(sqrt(0.595 * 0.405 + 0.844 * 0.156), 3)
+      round(sqrt(0.58 * 0.42 + 0.82 * 0.18), 3)
     )
   })
 
@@ -1272,8 +1272,8 @@ server <- function(input, output, session) {
 
   output$popInfo <- renderTable({
     ctable <- matrix(
-      c(as.character(paste0(0.595*100, "%")),
-        as.character(paste0(0.844*100, "%"))),
+      c(as.character(paste0(0.58*100, "%")),
+        as.character(paste0(0.82*100, "%"))),
       nrow = 1)
     colnames(ctable) <- c("University Park", "Other Campuses")
     ctable
