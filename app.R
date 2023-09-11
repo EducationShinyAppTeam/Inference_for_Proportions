@@ -275,12 +275,12 @@ ui <- list(
           br(),
           h2("Acknowledgements"),
           p(
-            "This app was developed and programmed by  Yingjie (Chelsea) Wang and
-            updated by Zhuolin Luo in 2020.",
+            "This app was developed and programmed by  Yingjie (Chelsea) Wang,
+            updated by Zhuolin Luo in 2020, and updated by Rob Chappell in 2023.",
             br(),
             br(),
             br(),
-            div(class = "updated", "Last Update: 11/03/2020 by NJH.")
+            div(class = "updated", "Last Update: 09/09/2023 by NJH.")
           )
         ),
         ## UP Residency-Single Proportion ----
