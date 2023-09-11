@@ -280,7 +280,7 @@ ui <- list(
             br(),
             br(),
             br(),
-            div(class = "updated", "Last Update: 09/09/2023 by RWC.")
+            div(class = "updated", "Last Update: 09/09/2023 by RC.")
           )
         ),
         ## UP Residency-Single Proportion ----
